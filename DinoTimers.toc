@@ -1,0 +1,9 @@
+## Interface: 11302
+## Author: Chris
+## Title: Dino Timers
+## Notes: Tracks Time Since Dino Was Killed
+## Version: 1.0
+## OptionalDeps: 
+## SavedVariables: DinoTimersVariables
+## SavedVariablesPerCharacter:
+DinoTimers.lua
