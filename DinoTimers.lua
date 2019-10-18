@@ -84,8 +84,6 @@ startButton5 = CreateFrame("Button","startButton1",UIParent,"UIPanelButtonGrayTe
 startButton6 = CreateFrame("Button","startButton1",UIParent,"UIPanelButtonGrayTemplate")
 end
 
-
-
 setDefaults = function()
 MainFrame:SetPoint("CENTER")
 MainFrame:SetSize(200,200)
@@ -321,8 +319,10 @@ function MainFrame:OnUpdate(arg1)
 -- actual code end
 		if(updateNow == false) then
 			timeSinceUpdate = 0
+		else
+			updateNow = false
 		end
-		updateNow = false
+
 	end
 end
 
@@ -335,6 +335,9 @@ resetButton:SetScript("OnMouseUp", function(self, button)
 end)
 
 startButton1:SetScript("OnMouseUp", function(self, button)
+	local targetName = "/target Vanishd"
+	DEFAULT_CHAT_FRAME.editBox:SetText(targetName) ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
+	
 	if(startButton1:GetText() ==  "Start") then
 		diedAt("NW")
 		startButton1:SetText("Reset")
