@@ -211,6 +211,8 @@ resetNW = function()
 
 	timer1:SetPoint("TOPLEFT",text,"BOTTOMRIGHT",0,-3)
 	timer1:SetText(gryClr .. "00:00")
+	
+	startButton1:SetText("Start")
 end
 
 resetN = function()
@@ -220,6 +222,8 @@ resetN = function()
 
 	timer2:SetPoint("TOPLEFT",timer1,"BOTTOMLEFT",0,-3)
 	timer2:SetText(gryClr .. "00:00")
+	
+	startButton2:SetText("Start")
 end
 
 resetE = function()
@@ -229,6 +233,8 @@ resetE = function()
 
 	timer3:SetPoint("TOPLEFT",timer2,"BOTTOMLEFT",0,-3)
 	timer3:SetText(gryClr .. "00:00")
+	
+	startButton3:SetText("Start")
 end
 
 resetW = function()
@@ -238,6 +244,8 @@ resetW = function()
 
 	timer4:SetPoint("TOPLEFT",timer3,"BOTTOMLEFT",0,-3)
 	timer4:SetText(gryClr .. "00:00")
+	
+	startButton4:SetText("Start")
 end
 
 resetSW = function()
@@ -247,6 +255,8 @@ resetSW = function()
 
 	timer5:SetPoint("TOPLEFT",timer4,"BOTTOMLEFT",0,-3)
 	timer5:SetText(gryClr .. "00:00")
+	
+	startButton5:SetText("Start")
 end
 
 resetSE = function()
@@ -256,61 +266,18 @@ resetSE = function()
 	
 	timer6:SetPoint("TOPLEFT",timer5,"BOTTOMLEFT",0,-3)
 	timer6:SetText(gryClr .. "00:00")
+	
+	startButton6:SetText("Start")
 end
 
 reset = function()
-NW = 0;
-N = 0;
-E = 0;
-W = 0;
-SW = 0;
-SE = 0;
 
-text1:SetPoint("TOPLEFT",text,"BOTTOMLEFT",0,0)
-text1:SetText(gryClr .. "North West")
-
-text2:SetPoint("TOPLEFT",text1,"BOTTOMLEFT",0,-3)
-text2:SetText(gryClr .. "North")
-
-text3:SetPoint("TOPLEFT",text2,"BOTTOMLEFT",0,-3)
-text3:SetText(gryClr .. "East")
-
-text4:SetPoint("TOPLEFT",text3,"BOTTOMLEFT",0,-3)
-text4:SetText(gryClr .. "West")
-
-text5:SetPoint("TOPLEFT",text4,"BOTTOMLEFT",0,-3)
-text5:SetText(gryClr .. "South West")
-
-text6:SetPoint("TOPLEFT",text5,"BOTTOMLEFT",0,-3)
-text6:SetText(gryClr .. "South East")
-
-timer:SetPoint("TOPLEFT",text,"TOPRIGHT")
-timer:SetText(gryClr .. "00:00")
-
-timer1:SetPoint("TOPLEFT",text,"BOTTOMRIGHT",0,-3)
-timer1:SetText(gryClr .. "00:00")
-
-timer2:SetPoint("TOPLEFT",timer1,"BOTTOMLEFT",0,-3)
-timer2:SetText(gryClr .. "00:00")
-
-timer3:SetPoint("TOPLEFT",timer2,"BOTTOMLEFT",0,-3)
-timer3:SetText(gryClr .. "00:00")
-
-timer4:SetPoint("TOPLEFT",timer3,"BOTTOMLEFT",0,-3)
-timer4:SetText(gryClr .. "00:00")
-
-timer5:SetPoint("TOPLEFT",timer4,"BOTTOMLEFT",0,-3)
-timer5:SetText(gryClr .. "00:00")
-
-timer6:SetPoint("TOPLEFT",timer5,"BOTTOMLEFT",0,-3)
-timer6:SetText(gryClr .. "00:00")
-
-startButton1:SetText("Start")
-startButton2:SetText("Start")
-startButton3:SetText("Start")
-startButton4:SetText("Start")
-startButton5:SetText("Start")
-startButton6:SetText("Start")
+resetNW()
+resetN()
+resetE()
+resetW()
+resetSW()
+resetSE()
 
 tStart = time()
 updateCurrentTime()
@@ -373,7 +340,6 @@ startButton1:SetScript("OnMouseUp", function(self, button)
 		startButton1:SetText("Reset")
 		updateNow = true
 	elseif(startButton1:GetText() == "Reset") then
-		startButton1:SetText("Start")
 		resetNW()
 		end
 end)
@@ -384,7 +350,6 @@ startButton2:SetScript("OnMouseUp", function(self, button)
 		startButton2:SetText("Reset")
 		updateNow = true
 	elseif(startButton2:GetText() == "Reset") then
-		startButton2:SetText("Start")
 		resetN()
 		end
 end)
@@ -395,7 +360,6 @@ startButton3:SetScript("OnMouseUp", function(self, button)
 		startButton3:SetText("Reset")
 		updateNow = true
 	elseif(startButton3:GetText() == "Reset") then
-		startButton3:SetText("Start")
 		resetE()
 		end
 end)
@@ -406,7 +370,6 @@ startButton4:SetScript("OnMouseUp", function(self, button)
 		startButton4:SetText("Reset")
 		updateNow = true
 	elseif(startButton4:GetText() == "Reset") then
-		startButton4:SetText("Start")
 		resetW()
 		end
 end)
@@ -417,7 +380,6 @@ startButton5:SetScript("OnMouseUp", function(self, button)
 		startButton5:SetText("Reset")
 		updateNow = true
 	elseif(startButton5:GetText() == "Reset") then
-		startButton5:SetText("Start")
 		resetSW()
 		end
 end)
@@ -428,7 +390,6 @@ startButton6:SetScript("OnMouseUp", function(self, button)
 		startButton6:SetText("Reset")
 		updateNow = true
 	elseif(startButton6:GetText() == "Reset") then
-		startButton6:SetText("Start")
 		resetSE()
 		end
 end)
