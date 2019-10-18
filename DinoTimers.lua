@@ -97,6 +97,7 @@ MainFrame:SetUserPlaced(true)
 MainFrame:EnableMouse()
 MainFrame:SetScript("OnUpdate", MainFrame.OnUpdate)
 
+
 text:SetPoint("TOPLEFT")
 text:SetJustifyH("LEFT")
 --text:SetFont(DinoTimersFont, 10, "OUTLINE")
@@ -189,6 +190,74 @@ startButton6:RegisterForClicks("LeftButtonUp")
 
 end
 
+backdropDefault = function()
+
+background = "Interface\\TutorialFrame\\TutorialFrameBackground"
+edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border"
+backdrop =
+{
+    bgFile = background,
+    edgeFile = edge,
+    tile = false, tileSize = 16, edgeSize = 16,
+    insets = { left = 0, right = 0, top = 0, bottom = -10 }
+}
+
+end
+
+resetNW = function()
+	NW = 0;
+	text1:SetPoint("TOPLEFT",text,"BOTTOMLEFT",0,0)
+	text1:SetText(gryClr .. "North West")
+
+	timer1:SetPoint("TOPLEFT",text,"BOTTOMRIGHT",0,-3)
+	timer1:SetText(gryClr .. "00:00")
+end
+
+resetN = function()
+	N = 0;
+	text2:SetPoint("TOPLEFT",text1,"BOTTOMLEFT",0,-3)
+	text2:SetText(gryClr .. "North")
+
+	timer2:SetPoint("TOPLEFT",timer1,"BOTTOMLEFT",0,-3)
+	timer2:SetText(gryClr .. "00:00")
+end
+
+resetE = function()
+	E = 0
+	text3:SetPoint("TOPLEFT",text2,"BOTTOMLEFT",0,-3)
+	text3:SetText(gryClr .. "East")
+
+	timer3:SetPoint("TOPLEFT",timer2,"BOTTOMLEFT",0,-3)
+	timer3:SetText(gryClr .. "00:00")
+end
+
+resetW = function()
+	W = 0
+	text4:SetPoint("TOPLEFT",text3,"BOTTOMLEFT",0,-3)
+	text4:SetText(gryClr .. "West")
+
+	timer4:SetPoint("TOPLEFT",timer3,"BOTTOMLEFT",0,-3)
+	timer4:SetText(gryClr .. "00:00")
+end
+
+resetSW = function()
+	SW = 0
+	text5:SetPoint("TOPLEFT",text4,"BOTTOMLEFT",0,-3)
+	text5:SetText(gryClr .. "South West")
+
+	timer5:SetPoint("TOPLEFT",timer4,"BOTTOMLEFT",0,-3)
+	timer5:SetText(gryClr .. "00:00")
+end
+
+resetSE = function()
+	SE = 0
+	text6:SetPoint("TOPLEFT",text5,"BOTTOMLEFT",0,-3)
+	text6:SetText(gryClr .. "South East")
+	
+	timer6:SetPoint("TOPLEFT",timer5,"BOTTOMLEFT",0,-3)
+	timer6:SetText(gryClr .. "00:00")
+end
+
 reset = function()
 NW = 0;
 N = 0;
@@ -248,9 +317,24 @@ updateCurrentTime()
 
 end
 
-createFrames()
-setDefaults()
+adjustSize = function()
+	width = text:GetStringWidth() + timer:GetStringWidth()
+	height = text:GetStringHeight() + (text1:GetStringHeight() * 6) + 9
+	MainFrame:SetSize(width,height)
+end
 
+createFrames()
+backdropDefault()
+setDefaults()
+adjustSize()
+
+MainFrame:SetScript('OnEnter', function() 
+	MainFrame:SetBackdrop(backdrop)
+end)
+
+MainFrame:SetScript('OnLeave', function()
+	MainFrame:SetBackdropColor(1,1,1,0)
+end)
 
 function MainFrame:OnUpdate(arg1)
 	timeSinceUpdate = timeSinceUpdate + arg1
@@ -284,39 +368,69 @@ resetButton:SetScript("OnMouseUp", function(self, button)
 end)
 
 startButton1:SetScript("OnMouseUp", function(self, button)
-	diedAt("NW")
-	startButton1:SetText("Reset")
-	updateNow = true
+	if(startButton1:GetText() ==  "Start") then
+		diedAt("NW")
+		startButton1:SetText("Reset")
+		updateNow = true
+	elseif(startButton1:GetText() == "Reset") then
+		startButton1:SetText("Start")
+		resetNW()
+		end
 end)
 
 startButton2:SetScript("OnMouseUp", function(self, button)
-	diedAt("N")
-	startButton2:SetText("Reset")
-	updateNow = true
+	if(startButton2:GetText() ==  "Start") then
+		diedAt("N")
+		startButton2:SetText("Reset")
+		updateNow = true
+	elseif(startButton2:GetText() == "Reset") then
+		startButton2:SetText("Start")
+		resetN()
+		end
 end)
 
 startButton3:SetScript("OnMouseUp", function(self, button)
-	diedAt("E")
-	startButton3:SetText("Reset")
-	updateNow = true
+	if(startButton3:GetText() ==  "Start") then
+		diedAt("E")
+		startButton3:SetText("Reset")
+		updateNow = true
+	elseif(startButton3:GetText() == "Reset") then
+		startButton3:SetText("Start")
+		resetE()
+		end
 end)
 
 startButton4:SetScript("OnMouseUp", function(self, button)
-	diedAt("W")
-	startButton4:SetText("Reset")
-	updateNow = true
+	if(startButton4:GetText() ==  "Start") then
+		diedAt("W")
+		startButton4:SetText("Reset")
+		updateNow = true
+	elseif(startButton4:GetText() == "Reset") then
+		startButton4:SetText("Start")
+		resetW()
+		end
 end)
 
 startButton5:SetScript("OnMouseUp", function(self, button)
-	diedAt("SW")
-	startButton5:SetText("Reset")
-	updateNow = true
+	if(startButton5:GetText() ==  "Start") then
+		diedAt("SW")
+		startButton5:SetText("Reset")
+		updateNow = true
+	elseif(startButton5:GetText() == "Reset") then
+		startButton5:SetText("Start")
+		resetSW()
+		end
 end)
 
 startButton6:SetScript("OnMouseUp", function(self, button)
-	diedAt("SE")
-	startButton6:SetText("Reset")
-	updateNow = true
+	if(startButton6:GetText() ==  "Start") then
+		diedAt("SE")
+		startButton6:SetText("Reset")
+		updateNow = true
+	elseif(startButton6:GetText() == "Reset") then
+		startButton6:SetText("Start")
+		resetSE()
+		end
 end)
 
 MainFrame:SetScript("OnMouseDown", function(self, button)
@@ -350,12 +464,10 @@ end
 
 diedAt = function(dino)
 	if(dino == "NW") then
-		print(dino)
 		NW = sessionTime
 	end
 	if(dino == "N") then
 		N = sessionTime
-		--print(N)
 	end
 	if(dino == "E") then
 		E = sessionTime
