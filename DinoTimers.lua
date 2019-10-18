@@ -426,20 +426,20 @@ getPlayerPosition = function()
 end
 
 getPlayerArea = function(pos)
-	if( pos.x > 32 and pos.x < 40 and pos.y > 15 and pos.y < 35) then
+	if( pos.x > 29 and pos.x < 40 and pos.y > 15 and pos.y < 30) then
 		return "NW"
 	elseif( pos.x > 53 and pos.x < 70 and pos.y > 18 and pos.y < 38) then
 		return "N"
-	elseif(pos.x > 65 and pos.x < 75 and pos.y > 25 and pos.y <60) then
+	elseif(pos.x > 65 and pos.x < 80 and pos.y > 25 and pos.y <60) then
 		return "E"
-	elseif(pos.x > 25 and pos.x < 41 and pos.y > 28 and pos.y < 62) then
+	elseif(pos.x > 25 and pos.x < 41 and pos.y > 30 and pos.y < 60) then
 		return "W"
 	elseif( pos.x > 40 and pos.x < 50 and pos.y < 90 and pos.y > 55) then
 		return "SW"
 	elseif( pos.x >= 50 and pos.x < 62 and pos.y < 85 and pos.y > 40) then
 		return "SE"
 	else
-		print("NO ZONE")
+		print("Dino died in no specific zone - Manually start timer.")
 	end
 		
 end
