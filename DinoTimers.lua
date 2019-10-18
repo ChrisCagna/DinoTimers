@@ -30,6 +30,8 @@ local W = 0;
 local SW = 0;
 local SE = 0;
 
+local playerPosition
+
 
 SLASH_DINOTIMERS1 = "/dt"
 -- SLASH_DINOTIMERS2 = "/DT"
@@ -82,6 +84,8 @@ startButton3 = CreateFrame("Button","startButton1",UIParent,"UIPanelButtonGrayTe
 startButton4 = CreateFrame("Button","startButton1",UIParent,"UIPanelButtonGrayTemplate")
 startButton5 = CreateFrame("Button","startButton1",UIParent,"UIPanelButtonGrayTemplate")
 startButton6 = CreateFrame("Button","startButton1",UIParent,"UIPanelButtonGrayTemplate")
+
+MainFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 end
 
 setDefaults = function()
@@ -293,14 +297,6 @@ backdropDefault()
 setDefaults()
 adjustSize()
 
-MainFrame:SetScript('OnEnter', function() 
-	MainFrame:SetBackdrop(backdrop)
-end)
-
-MainFrame:SetScript('OnLeave', function()
-	MainFrame:SetBackdropColor(1,1,1,0)
-end)
-
 function MainFrame:OnUpdate(arg1)
 	timeSinceUpdate = timeSinceUpdate + arg1
 	if(updateInterval<timeSinceUpdate or updateNow == true) then
@@ -314,6 +310,8 @@ function MainFrame:OnUpdate(arg1)
 		printController(W)
 		printController(SW)
 		printController(SE)
+		
+		print(getPlayerArea(getPlayerPosition()))
 
 			
 -- actual code end
@@ -326,7 +324,13 @@ function MainFrame:OnUpdate(arg1)
 	end
 end
 
-MainFrame:SetScript("OnUpdate", MainFrame.OnUpdate)
+MainFrame:SetScript('OnEnter', function() 
+	MainFrame:SetBackdrop(backdrop)
+end)
+
+MainFrame:SetScript('OnLeave', function()
+	MainFrame:SetBackdropColor(1,1,1,0)
+end)
 
 resetButton:SetScript("OnMouseUp", function(self, button)
 	resetButton:SetText("Reset")
@@ -334,14 +338,9 @@ resetButton:SetScript("OnMouseUp", function(self, button)
 	updateNow = true
 end)
 
-startButton1:SetScript("OnMouseUp", function(self, button)
-	local targetName = "/target Vanishd"
-	DEFAULT_CHAT_FRAME.editBox:SetText(targetName) ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
-	
+startButton1:SetScript("OnMouseUp", function(self, button)	
 	if(startButton1:GetText() ==  "Start") then
 		diedAt("NW")
-		startButton1:SetText("Reset")
-		updateNow = true
 	elseif(startButton1:GetText() == "Reset") then
 		resetNW()
 		end
@@ -350,8 +349,6 @@ end)
 startButton2:SetScript("OnMouseUp", function(self, button)
 	if(startButton2:GetText() ==  "Start") then
 		diedAt("N")
-		startButton2:SetText("Reset")
-		updateNow = true
 	elseif(startButton2:GetText() == "Reset") then
 		resetN()
 		end
@@ -360,8 +357,6 @@ end)
 startButton3:SetScript("OnMouseUp", function(self, button)
 	if(startButton3:GetText() ==  "Start") then
 		diedAt("E")
-		startButton3:SetText("Reset")
-		updateNow = true
 	elseif(startButton3:GetText() == "Reset") then
 		resetE()
 		end
@@ -370,8 +365,6 @@ end)
 startButton4:SetScript("OnMouseUp", function(self, button)
 	if(startButton4:GetText() ==  "Start") then
 		diedAt("W")
-		startButton4:SetText("Reset")
-		updateNow = true
 	elseif(startButton4:GetText() == "Reset") then
 		resetW()
 		end
@@ -380,8 +373,6 @@ end)
 startButton5:SetScript("OnMouseUp", function(self, button)
 	if(startButton5:GetText() ==  "Start") then
 		diedAt("SW")
-		startButton5:SetText("Reset")
-		updateNow = true
 	elseif(startButton5:GetText() == "Reset") then
 		resetSW()
 		end
@@ -390,8 +381,6 @@ end)
 startButton6:SetScript("OnMouseUp", function(self, button)
 	if(startButton6:GetText() ==  "Start") then
 		diedAt("SE")
-		startButton6:SetText("Reset")
-		updateNow = true
 	elseif(startButton6:GetText() == "Reset") then
 		resetSE()
 		end
@@ -414,6 +403,47 @@ MainFrame:SetScript("OnMouseUp", function(self, button)
 	end
 end)
 
+MainFrame:SetScript("OnEvent", -- THE GOOD SHIT - The call that starts the entire thing. detects dinos death and calculates location
+	function(self, event, ...)
+	if(event == "COMBAT_LOG_EVENT_UNFILTERED") then
+		local _, eventType, _, sourceGUID, sourceName, _, _, destGUID, destName, _, _, spellID = CombatLogGetCurrentEventInfo()
+
+			if(eventType == "UNIT_DIED" and string.find(destName, "Devilsaur")) then
+				diedAt(getPlayerArea(getPlayerPosition()))
+			end
+	end
+end)
+
+getPlayerPosition = function()
+	local mapID
+	mapID = C_Map.GetBestMapForUnit("player")
+	if (mapID) then
+		playerPosition = C_Map.GetPlayerMapPosition(mapID,"player")
+		playerPosition.x = playerPosition.x*100
+		playerPosition.y = playerPosition.y*100
+		return playerPosition
+	end
+end
+
+getPlayerArea = function(pos)
+	if( pos.x > 32 and pos.x < 40 and pos.y > 15 and pos.y < 35) then
+		return "NW"
+	elseif( pos.x > 53 and pos.x < 70 and pos.y > 18 and pos.y < 38) then
+		return "N"
+	elseif(pos.x > 65 and pos.x < 75 and pos.y > 25 and pos.y <60) then
+		return "E"
+	elseif(pos.x > 25 and pos.x < 41 and pos.y > 28 and pos.y < 62) then
+		return "W"
+	elseif( pos.x > 40 and pos.x < 50 and pos.y < 90 and pos.y > 55) then
+		return "SW"
+	elseif( pos.x >= 50 and pos.x < 62 and pos.y < 85 and pos.y > 40) then
+		return "SE"
+	else
+		print("NO ZONE")
+	end
+		
+end
+
 updateCurrentTime = function()
 	sessionTime = time() - tStart
 end
@@ -429,21 +459,33 @@ end
 diedAt = function(dino)
 	if(dino == "NW") then
 		NW = sessionTime
+		startButton1:SetText("Reset")
+		updateNow = true
 	end
 	if(dino == "N") then
 		N = sessionTime
+		startButton2:SetText("Reset")
+		updateNow = true
 	end
 	if(dino == "E") then
 		E = sessionTime
+		startButton3:SetText("Reset")
+		updateNow = true
 	end
 	if(dino == "W") then
 		W = sessionTime
+		startButton4:SetText("Reset")
+		updateNow = true
 	end
 	if(dino == "SW") then
 		SW = sessionTime
+		startButton5:SetText("Reset")
+		updateNow = true
 	end
 	if(dino == "SE") then
 		SE = sessionTime
+		startButton6:SetText("Reset")
+		updateNow = true
 	end
 end
 
@@ -489,7 +531,7 @@ printController = function(dino)
 	
 end
 
-
+MainFrame:SetScript("OnUpdate", MainFrame.OnUpdate)
 
 
 
