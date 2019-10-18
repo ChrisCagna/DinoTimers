@@ -297,7 +297,7 @@ backdropDefault()
 setDefaults()
 adjustSize()
 
-function MainFrame:OnUpdate(arg1)
+function MainFrame:OnUpdate(arg1) -- MAIN UPDATE FUNCTION!
 	timeSinceUpdate = timeSinceUpdate + arg1
 	if(updateInterval<timeSinceUpdate or updateNow == true) then
 -- actual code on update here
@@ -310,8 +310,6 @@ function MainFrame:OnUpdate(arg1)
 		printController(W)
 		printController(SW)
 		printController(SE)
-		
-		print(getPlayerArea(getPlayerPosition()))
 
 			
 -- actual code end
