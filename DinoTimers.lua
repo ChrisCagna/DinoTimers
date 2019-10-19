@@ -128,7 +128,7 @@ text6:SetText(gryClr .. "South East")
 timer:SetPoint("TOPLEFT",text,"TOPRIGHT")
 timer:SetText(gryClr .. "00:00")
 
-timer1:SetPoint("TOPLEFT",text,"BOTTOMRIGHT",0,-3)
+timer1:SetPoint("TOPLEFT",text,"BOTTOMRIGHT",0,0)
 timer1:SetText(gryClr .. "00:00")
 
 timer2:SetPoint("TOPLEFT",timer1,"BOTTOMLEFT",0,-3)
@@ -503,27 +503,27 @@ printController = function(dino)
 	
 	if(dino > 0 and dino == NW) then
 		text1:SetText(clr .. "North West")
-		timer1:SetText(secondsFormat(timeDead(NW)))
+		timer1:SetText(clr .. secondsFormat(timeDead(NW)))
 	end
 	if(dino > 0 and dino == N) then
 		text2:SetText(clr .. "North")
-		timer2:SetText(secondsFormat(timeDead(N)))
+		timer2:SetText(clr .. secondsFormat(timeDead(N)))
 	end
 	if(dino > 0 and dino == E) then
 		text3:SetText(clr .. "East")
-		timer3:SetText(secondsFormat(timeDead(E)))
+		timer3:SetText(clr .. secondsFormat(timeDead(E)))
 	end
 	if(dino > 0 and dino == W) then
 		text4:SetText(clr .. "West")
-		timer4:SetText(secondsFormat(timeDead(W)))
+		timer4:SetText(clr .. secondsFormat(timeDead(W)))
 	end
 	if(dino > 0 and dino == SW) then
 		text5:SetText(clr .. "South West")
-		timer5:SetText(secondsFormat(timeDead(SW)))
+		timer5:SetText(clr .. secondsFormat(timeDead(SW)))
 	end
 	if(dino > 0 and dino == SE) then
 		text6:SetText(clr .. "South East")
-		timer6:SetText(secondsFormat(timeDead(SE)))
+		timer6:SetText(clr .. secondsFormat(timeDead(SE)))
 	end	
 	
 	
