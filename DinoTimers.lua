@@ -32,6 +32,9 @@ local SE = 0;
 
 local playerPosition
 
+local dinoFoundTime = -100
+local dinoFoundSoundInterval = 45
+
 
 SLASH_DINOTIMERS1 = "/dt"
 -- SLASH_DINOTIMERS2 = "/DT"
@@ -86,6 +89,7 @@ startButton5 = CreateFrame("Button","startButton1",UIParent,"UIPanelButtonGrayTe
 startButton6 = CreateFrame("Button","startButton1",UIParent,"UIPanelButtonGrayTemplate")
 
 MainFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+MainFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
 end
 
 setDefaults = function()
@@ -310,7 +314,6 @@ function MainFrame:OnUpdate(arg1) -- MAIN UPDATE FUNCTION!
 		printController(W)
 		printController(SW)
 		printController(SE)
-
 			
 -- actual code end
 		if(updateNow == false) then
@@ -409,7 +412,15 @@ MainFrame:SetScript("OnEvent", -- THE GOOD SHIT - The call that starts the entir
 			if(eventType == "UNIT_DIED" and string.find(destName, "Devilsaur")) then
 				diedAt(getPlayerArea(getPlayerPosition()))
 			end
+	elseif(event == "PLAYER_TARGET_CHANGED") then
+		local arg1 = ...
+		
+		if(sessionTime - dinoFoundTime > dinoFoundSoundInterval) then
+			getTargetName()
+			dinoFoundTime = sessionTime
+		end
 	end
+		
 end)
 
 getPlayerPosition = function()
@@ -440,6 +451,15 @@ getPlayerArea = function(pos)
 		print("Dino died in no specific zone - Manually start timer.")
 	end
 		
+end
+
+getTargetName = function()
+	local name = UnitName("target")
+	if(name ~= nil) then
+		if(string.find(name, "Devilsaur")) then
+			PlaySoundFile("Interface\\AddOns\\DinoTimers\\Sounds\\Walking.ogg", "Master")
+		end
+	end
 end
 
 updateCurrentTime = function()
