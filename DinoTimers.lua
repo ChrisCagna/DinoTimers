@@ -1,13 +1,15 @@
 DinoTimersVariables = {
 
 }
-local DinoTimersFont = "Fonts\\ARIALN.ttf"
+local DinoTimersFont = "Interface\\AddOns\\DinoTimers\\Fonts\\FFF_Tusj.ttf"
 local version = 1.0
 local dtClr = "|cff009F00"
 local gryClr = "|cffA9A9A9"
 
 local width = 100
 local height = 100
+local fontSize = 15
+local fontFlags = "OUTLINE"
 
 local xpos1 = 0
 local ypos1 = 0
@@ -34,6 +36,8 @@ local playerPosition
 
 local dinoFoundTime = -100
 local dinoFoundSoundInterval = 45
+
+local mobName = "Devilsaur"
 
 
 SLASH_DINOTIMERS1 = "/dt"
@@ -90,6 +94,7 @@ startButton6 = CreateFrame("Button","startButton1",UIParent,"UIPanelButtonGrayTe
 
 MainFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 MainFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
+MainFrame:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
 end
 
 setDefaults = function()
@@ -108,89 +113,102 @@ text:SetPoint("TOPLEFT")
 text:SetJustifyH("LEFT")
 --text:SetFont(DinoTimersFont, 10, "OUTLINE")
 text:SetText(dtClr .. "|TInterface\\Icons\\Inv_misc_pelt_03:16|tSession:            \n ")
-
+text:SetFont(DinoTimersFont, fontSize, fontFlags)
 
 
 text1:SetPoint("TOPLEFT",text,"BOTTOMLEFT",0,0)
-text1:SetText(gryClr .. "North West")
+text1:SetText(gryClr .. "North West:")
+text1:SetFont(DinoTimersFont, fontSize, fontFlags)
 
 text2:SetPoint("TOPLEFT",text1,"BOTTOMLEFT",0,-3)
-text2:SetText(gryClr .. "North")
+text2:SetText(gryClr .. "North:")
+text2:SetFont(DinoTimersFont, fontSize, fontFlags)
 
 text3:SetPoint("TOPLEFT",text2,"BOTTOMLEFT",0,-3)
-text3:SetText(gryClr .. "East")
+text3:SetText(gryClr .. "East:")
+text3:SetFont(DinoTimersFont, fontSize, fontFlags)
 
 text4:SetPoint("TOPLEFT",text3,"BOTTOMLEFT",0,-3)
-text4:SetText(gryClr .. "West")
+text4:SetText(gryClr .. "West:")
+text4:SetFont(DinoTimersFont, fontSize, fontFlags)
 
 text5:SetPoint("TOPLEFT",text4,"BOTTOMLEFT",0,-3)
-text5:SetText(gryClr .. "South West")
+text5:SetText(gryClr .. "South West:")
+text5:SetFont(DinoTimersFont, fontSize, fontFlags)
 
 text6:SetPoint("TOPLEFT",text5,"BOTTOMLEFT",0,-3)
-text6:SetText(gryClr .. "South East")
+text6:SetText(gryClr .. "South East:")
+text6:SetFont(DinoTimersFont, fontSize, fontFlags)
 
 timer:SetPoint("TOPLEFT",text,"TOPRIGHT")
 timer:SetText(gryClr .. "00:00")
+timer:SetFont(DinoTimersFont, fontSize, fontFlags)
 
 timer1:SetPoint("TOPLEFT",text,"BOTTOMRIGHT",0,0)
 timer1:SetText(gryClr .. "00:00")
+timer1:SetFont(DinoTimersFont, fontSize, fontFlags)
 
 timer2:SetPoint("TOPLEFT",timer1,"BOTTOMLEFT",0,-3)
 timer2:SetText(gryClr .. "00:00")
+timer2:SetFont(DinoTimersFont, fontSize, fontFlags)
 
 timer3:SetPoint("TOPLEFT",timer2,"BOTTOMLEFT",0,-3)
 timer3:SetText(gryClr .. "00:00")
+timer3:SetFont(DinoTimersFont, fontSize, fontFlags)
 
 timer4:SetPoint("TOPLEFT",timer3,"BOTTOMLEFT",0,-3)
 timer4:SetText(gryClr .. "00:00")
+timer4:SetFont(DinoTimersFont, fontSize, fontFlags)
 
 timer5:SetPoint("TOPLEFT",timer4,"BOTTOMLEFT",0,-3)
 timer5:SetText(gryClr .. "00:00")
+timer5:SetFont(DinoTimersFont, fontSize, fontFlags)
 
 timer6:SetPoint("TOPLEFT",timer5,"BOTTOMLEFT",0,-3)
 timer6:SetText(gryClr .. "00:00")
+timer6:SetFont(DinoTimersFont, fontSize, fontFlags)
 
 resetButton:SetPoint("TOPRIGHT",text, "TOPLEFT",-2,0)
-resetButton:SetWidth(40)
-resetButton:SetHeight(20)
+resetButton:SetWidth(timer:GetStringWidth()/1.5)
+resetButton:SetHeight(text:GetStringHeight()/2)
 resetButton:SetText("Reset")
 resetButton:RegisterForClicks("LeftButtonUp")
 
 startButton1:SetPoint("TOPRIGHT",text1, "TOPLEFT",-2,0)
-startButton1:SetWidth(40)
-startButton1:SetHeight(15)
+startButton1:SetWidth(timer:GetStringWidth()/1.5)
+startButton1:SetHeight(text1:GetStringHeight())
 startButton1:SetText("Start")
 startButton1:RegisterForClicks("LeftButtonUp")
 --startButton1:CreateFontString(nil,"OVERLAY","GameFontNormal")
 --startButton1:SetFont(DinoTimersFont, 10, "OUTLINE")
 
 startButton2:SetPoint("TOPRIGHT",text2, "TOPLEFT",-2,0)
-startButton2:SetWidth(40)
-startButton2:SetHeight(15)
+startButton2:SetWidth(timer:GetStringWidth()/1.5)
+startButton2:SetHeight(text2:GetStringHeight())
 startButton2:SetText("Start")
 startButton2:RegisterForClicks("LeftButtonUp")
 
 startButton3:SetPoint("TOPRIGHT",text3, "TOPLEFT",-2,0)
-startButton3:SetWidth(40)
-startButton3:SetHeight(15)
+startButton3:SetWidth(timer:GetStringWidth()/1.5)
+startButton3:SetHeight(text3:GetStringHeight())
 startButton3:SetText("Start")
 startButton3:RegisterForClicks("LeftButtonUp")
 
 startButton4:SetPoint("TOPRIGHT",text4, "TOPLEFT",-2,0)
-startButton4:SetWidth(40)
-startButton4:SetHeight(15)
+startButton4:SetWidth(timer:GetStringWidth()/1.5)
+startButton4:SetHeight(text4:GetStringHeight())
 startButton4:SetText("Start")
 startButton4:RegisterForClicks("LeftButtonUp")
 
 startButton5:SetPoint("TOPRIGHT",text5, "TOPLEFT",-2,0)
-startButton5:SetWidth(40)
-startButton5:SetHeight(15)
+startButton5:SetWidth(timer:GetStringWidth()/1.5)
+startButton5:SetHeight(text5:GetStringHeight())
 startButton5:SetText("Start")
 startButton5:RegisterForClicks("LeftButtonUp")
 
 startButton6:SetPoint("TOPRIGHT",text6, "TOPLEFT",-2,0)
-startButton6:SetWidth(40)
-startButton6:SetHeight(15)
+startButton6:SetWidth(timer:GetStringWidth()/1.5)
+startButton6:SetHeight(text6:GetStringHeight())
 startButton6:SetText("Start")
 startButton6:RegisterForClicks("LeftButtonUp")
 
@@ -213,9 +231,9 @@ end
 resetNW = function()
 	NW = 0;
 	text1:SetPoint("TOPLEFT",text,"BOTTOMLEFT",0,0)
-	text1:SetText(gryClr .. "North West")
+	text1:SetText(gryClr .. "North West:")
 
-	timer1:SetPoint("TOPLEFT",text,"BOTTOMRIGHT",0,-3)
+	timer1:SetPoint("TOPLEFT",text,"BOTTOMRIGHT",0,0)
 	timer1:SetText(gryClr .. "00:00")
 	
 	startButton1:SetText("Start")
@@ -224,7 +242,7 @@ end
 resetN = function()
 	N = 0;
 	text2:SetPoint("TOPLEFT",text1,"BOTTOMLEFT",0,-3)
-	text2:SetText(gryClr .. "North")
+	text2:SetText(gryClr .. "North:")
 
 	timer2:SetPoint("TOPLEFT",timer1,"BOTTOMLEFT",0,-3)
 	timer2:SetText(gryClr .. "00:00")
@@ -235,7 +253,7 @@ end
 resetE = function()
 	E = 0
 	text3:SetPoint("TOPLEFT",text2,"BOTTOMLEFT",0,-3)
-	text3:SetText(gryClr .. "East")
+	text3:SetText(gryClr .. "East:")
 
 	timer3:SetPoint("TOPLEFT",timer2,"BOTTOMLEFT",0,-3)
 	timer3:SetText(gryClr .. "00:00")
@@ -246,7 +264,7 @@ end
 resetW = function()
 	W = 0
 	text4:SetPoint("TOPLEFT",text3,"BOTTOMLEFT",0,-3)
-	text4:SetText(gryClr .. "West")
+	text4:SetText(gryClr .. "West:")
 
 	timer4:SetPoint("TOPLEFT",timer3,"BOTTOMLEFT",0,-3)
 	timer4:SetText(gryClr .. "00:00")
@@ -257,7 +275,7 @@ end
 resetSW = function()
 	SW = 0
 	text5:SetPoint("TOPLEFT",text4,"BOTTOMLEFT",0,-3)
-	text5:SetText(gryClr .. "South West")
+	text5:SetText(gryClr .. "South West:")
 
 	timer5:SetPoint("TOPLEFT",timer4,"BOTTOMLEFT",0,-3)
 	timer5:SetText(gryClr .. "00:00")
@@ -268,7 +286,7 @@ end
 resetSE = function()
 	SE = 0
 	text6:SetPoint("TOPLEFT",text5,"BOTTOMLEFT",0,-3)
-	text6:SetText(gryClr .. "South East")
+	text6:SetText(gryClr .. "South East:")
 	
 	timer6:SetPoint("TOPLEFT",timer5,"BOTTOMLEFT",0,-3)
 	timer6:SetText(gryClr .. "00:00")
@@ -409,7 +427,7 @@ MainFrame:SetScript("OnEvent", -- THE GOOD SHIT - The call that starts the entir
 	if(event == "COMBAT_LOG_EVENT_UNFILTERED") then
 		local _, eventType, _, sourceGUID, sourceName, _, _, destGUID, destName, _, _, spellID = CombatLogGetCurrentEventInfo()
 
-			if(eventType == "UNIT_DIED" and string.find(destName, "Devilsaur")) then
+			if(eventType == "UNIT_DIED" and string.find(destName, mobName)) then
 				diedAt(getPlayerArea(getPlayerPosition()))
 			end
 	elseif(event == "PLAYER_TARGET_CHANGED") then
@@ -417,10 +435,12 @@ MainFrame:SetScript("OnEvent", -- THE GOOD SHIT - The call that starts the entir
 		
 		if(sessionTime - dinoFoundTime > dinoFoundSoundInterval) then
 			getTargetName()
-			dinoFoundTime = sessionTime
 		end
-	end
-		
+	elseif(event == "UPDATE_MOUSEOVER_UNIT") then
+		if(sessionTime - dinoFoundTime > dinoFoundSoundInterval) then
+			getMouseOverName()
+		end	
+	end		
 end)
 
 getPlayerPosition = function()
@@ -456,8 +476,19 @@ end
 getTargetName = function()
 	local name = UnitName("target")
 	if(name ~= nil) then
-		if(string.find(name, "Devilsaur")) then
+		if(string.find(name, mobName)) then
 			PlaySoundFile("Interface\\AddOns\\DinoTimers\\Sounds\\Walking.ogg", "Master")
+			dinoFoundTime = sessionTime
+		end
+	end
+end
+
+getMouseOverName = function()
+	local name = GameTooltipTextLeft1:GetText()
+	if(name ~= nil) then
+		if(string.find(name, mobName)) then
+			PlaySoundFile("Interface\\AddOns\\DinoTimers\\Sounds\\Walking.ogg", "Master")
+			dinoFoundTime = sessionTime
 		end
 	end
 end
@@ -522,27 +553,27 @@ printController = function(dino)
 	
 	
 	if(dino > 0 and dino == NW) then
-		text1:SetText(clr .. "North West")
+		text1:SetText(clr .. "North West:")
 		timer1:SetText(clr .. secondsFormat(timeDead(NW)))
 	end
 	if(dino > 0 and dino == N) then
-		text2:SetText(clr .. "North")
+		text2:SetText(clr .. "North:")
 		timer2:SetText(clr .. secondsFormat(timeDead(N)))
 	end
 	if(dino > 0 and dino == E) then
-		text3:SetText(clr .. "East")
+		text3:SetText(clr .. "East:")
 		timer3:SetText(clr .. secondsFormat(timeDead(E)))
 	end
 	if(dino > 0 and dino == W) then
-		text4:SetText(clr .. "West")
+		text4:SetText(clr .. "West:")
 		timer4:SetText(clr .. secondsFormat(timeDead(W)))
 	end
 	if(dino > 0 and dino == SW) then
-		text5:SetText(clr .. "South West")
+		text5:SetText(clr .. "South West:")
 		timer5:SetText(clr .. secondsFormat(timeDead(SW)))
 	end
 	if(dino > 0 and dino == SE) then
-		text6:SetText(clr .. "South East")
+		text6:SetText(clr .. "South East:")
 		timer6:SetText(clr .. secondsFormat(timeDead(SE)))
 	end	
 	
