@@ -46,7 +46,7 @@ SLASH_DINOTIMERS1 = "/dt"
 -- SLASH_DINOTIMERS3 = "/Dt"
 local function handler(msg, editBox)
 	if(msg == "test") then
-		GetChannelNumber()
+		--GetChannelNumber()
 		--DEFAULT_CHAT_FRAME.editBox:SetText("/8 NW") ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
 	elseif(msg == "NW" or msg == "N" or msg == "E" or msg == "W" or msg == "SW" or msg == "SE") then
 		diedAt(msg)
