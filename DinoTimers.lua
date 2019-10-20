@@ -38,6 +38,7 @@ local dinoFoundTime = -100
 local dinoFoundSoundInterval = 45
 
 local mobName = "Devilsaur"
+local channelNumber = 0
 
 
 SLASH_DINOTIMERS1 = "/dt"
@@ -45,7 +46,8 @@ SLASH_DINOTIMERS1 = "/dt"
 -- SLASH_DINOTIMERS3 = "/Dt"
 local function handler(msg, editBox)
 	if(msg == "test") then
-		--DEFAULT_CHAT_FRAME:AddMessage("Current Time: " .. sessionTime)
+		GetChannelNumber()
+		--DEFAULT_CHAT_FRAME.editBox:SetText("/8 NW") ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
 	elseif(msg == "NW" or msg == "N" or msg == "E" or msg == "W" or msg == "SW" or msg == "SE") then
 		diedAt(msg)
 	else
@@ -67,6 +69,7 @@ end)
 
 createFrames = function()
 MainFrame=CreateFrame("Frame","MainFrame",UIParent)
+ChatFrame=CreateFrame("Frame","ChatFrame",UIParent)
 
 text=MainFrame:CreateFontString(nil,"OVERLAY","GameFontNormal")
 text1=MainFrame:CreateFontString(nil,"OVERLAY","GameFontNormal")
@@ -95,6 +98,8 @@ startButton6 = CreateFrame("Button","startButton1",UIParent,"UIPanelButtonGrayTe
 MainFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 MainFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
 MainFrame:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
+
+ChatFrame:RegisterEvent("CHAT_MSG_CHANNEL")
 end
 
 setDefaults = function()
@@ -332,6 +337,10 @@ function MainFrame:OnUpdate(arg1) -- MAIN UPDATE FUNCTION!
 		printController(W)
 		printController(SW)
 		printController(SE)
+		
+		if(channelNumber == 0) then
+			GetChannelNumber()
+		end
 			
 -- actual code end
 		if(updateNow == false) then
@@ -443,6 +452,14 @@ MainFrame:SetScript("OnEvent", -- THE GOOD SHIT - The call that starts the entir
 	end		
 end)
 
+ChatFrame:SetScript("OnEvent",
+	function(self, event, ...)
+	local chatMessage, arg2, arg3, channelName, arg5, arg6, arg7, arg8, arg9 = ...
+		if(string.find(channelName, "DinoTimers")) then
+			diedAt(chatMessage)
+		end
+end)
+
 getPlayerPosition = function()
 	local mapID
 	mapID = C_Map.GetBestMapForUnit("player")
@@ -495,6 +512,31 @@ end
 
 updateCurrentTime = function()
 	sessionTime = time() - tStart
+end
+
+GetChannelNumber = function()
+	local count = 1
+	local zeroCount = 0
+	while(true) do
+	print(count)
+		local id, name = GetChannelName(count)
+		if(name ~= nil) then
+			if(string.find(name, "DinoTimers")) then 
+				channelNumber = id
+				print("id number is: " .. channelNumber)
+				return true
+			end
+		else
+			zeroCount = zeroCount +1
+		end
+		count = count + 1
+		if(zeroCount > 5) then
+			print('not in DinoTimers Channel')
+			DEFAULT_CHAT_FRAME.editBox:SetText("/join DinoTimers") ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
+			return true
+		end
+	end
+		
 end
 
 secondsFormat = function(t)
