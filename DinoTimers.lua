@@ -8,7 +8,7 @@ local gryClr = "|cffA9A9A9"
 
 local width = 100
 local height = 100
-local fontSize = 15
+local fontSize = 20
 local fontFlags = "OUTLINE"
 
 local xpos1 = 0
@@ -38,6 +38,8 @@ local dinoFoundTime = -100
 local dinoFoundSoundInterval = 45
 
 local mobName = "Devilsaur"
+local addonSync = false
+--local addonDisconnect = false
 local channelNumber = 0
 
 
@@ -46,10 +48,14 @@ SLASH_DINOTIMERS1 = "/dt"
 -- SLASH_DINOTIMERS3 = "/Dt"
 local function handler(msg, editBox)
 	if(msg == "test") then
-		--GetChannelNumber()
+		--addonSyncFunc()
 		--DEFAULT_CHAT_FRAME.editBox:SetText("/8 NW") ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
+		addonSync = true
 	elseif(msg == "NW" or msg == "N" or msg == "E" or msg == "W" or msg == "SW" or msg == "SE") then
 		diedAt(msg)
+	elseif(msg == "bigger") then
+		-- fontSize = fontSize + 4
+		-- setDefaults()
 	else
 		DEFAULT_CHAT_FRAME:AddMessage(dtClr .. "Dino Timers Commands: |r")
 	end
@@ -94,6 +100,7 @@ startButton3 = CreateFrame("Button","startButton1",UIParent,"UIPanelButtonGrayTe
 startButton4 = CreateFrame("Button","startButton1",UIParent,"UIPanelButtonGrayTemplate")
 startButton5 = CreateFrame("Button","startButton1",UIParent,"UIPanelButtonGrayTemplate")
 startButton6 = CreateFrame("Button","startButton1",UIParent,"UIPanelButtonGrayTemplate")
+syncButton = CreateFrame("Button","startButton1",UIParent,"UIPanelButtonGrayTemplate")
 
 MainFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 MainFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
@@ -217,6 +224,11 @@ startButton6:SetHeight(text6:GetStringHeight())
 startButton6:SetText("Start")
 startButton6:RegisterForClicks("LeftButtonUp")
 
+syncButton:SetPoint("TOP",text6, "BOTTOM",0,-5)
+syncButton:SetWidth(timer:GetStringWidth()*2)
+syncButton:SetHeight(text6:GetStringHeight()*2)
+syncButton:SetText("Connect")
+syncButton:RegisterForClicks("LeftButtonUp")
 end
 
 backdropDefault = function()
@@ -338,8 +350,8 @@ function MainFrame:OnUpdate(arg1) -- MAIN UPDATE FUNCTION!
 		printController(SW)
 		printController(SE)
 		
-		if(channelNumber == 0) then
-			GetChannelNumber()
+		if(addonSync) then
+			addonSyncFunc()
 		end
 			
 -- actual code end
@@ -414,6 +426,29 @@ startButton6:SetScript("OnMouseUp", function(self, button)
 		end
 end)
 
+syncButton:SetScript("OnMouseUp", function(self, button)
+	if(syncButton:GetText() == "Connect") then
+		addonSync = true
+		syncButton:SetText("|cffffff00Connecting..")
+	elseif(syncButton:GetText()) == "|cffff0000Disconnect" then
+		DEFAULT_CHAT_FRAME.editBox:SetText("/leave DinoTimers") ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
+		channelNumber = 0
+		syncButton:SetText("Connect")
+	end
+end)
+
+syncButton:SetScript('OnEnter', function()
+	if(syncButton:GetText() == "|cff00ff00Connected") then
+		syncButton:SetText("|cffff0000Disconnect")
+	end
+end)
+
+syncButton:SetScript('OnLeave', function()
+	if(syncButton:GetText() == "|cffff0000Disconnect") then
+		syncButton:SetText("|cff00ff00Connected")
+	end
+end)
+
 MainFrame:SetScript("OnMouseDown", function(self, button)
 	if button == "LeftButton" and not self.isMoving then
 		_, _, _, xpos1, ypos1 = MainFrame:GetPoint(1)
@@ -438,6 +473,7 @@ MainFrame:SetScript("OnEvent", -- THE GOOD SHIT - The call that starts the entir
 
 			if(eventType == "UNIT_DIED" and string.find(destName, mobName)) then
 				diedAt(getPlayerArea(getPlayerPosition()))
+				sendDiedAtMessage(getPlayerArea(getPlayerPosition()))
 			end
 	elseif(event == "PLAYER_TARGET_CHANGED") then
 		local arg1 = ...
@@ -456,7 +492,11 @@ ChatFrame:SetScript("OnEvent",
 	function(self, event, ...)
 	local chatMessage, arg2, arg3, channelName, arg5, arg6, arg7, arg8, arg9 = ...
 		if(string.find(channelName, "DinoTimers")) then
-			diedAt(chatMessage)
+			if(string.find(chatMessage,"DinoTimers:")) then
+				local temp = chatMessage:gsub('%DinoTimers:','')
+				diedAt(temp)
+				--print(string.sub('ITS WORKING', -7))
+			end
 		end
 end)
 
@@ -514,16 +554,17 @@ updateCurrentTime = function()
 	sessionTime = time() - tStart
 end
 
-GetChannelNumber = function()
+addonSyncFunc = function()
 	local count = 1
 	local zeroCount = 0
 	while(true) do
-	print(count)
 		local id, name = GetChannelName(count)
 		if(name ~= nil) then
 			if(string.find(name, "DinoTimers")) then 
 				channelNumber = id
-				print("id number is: " .. channelNumber)
+				print("DinoTimers Channel Number: " .. channelNumber)
+				syncButton:SetText("|cff00ff00Connected")
+				addonSync = false
 				return true
 			end
 		else
@@ -531,12 +572,16 @@ GetChannelNumber = function()
 		end
 		count = count + 1
 		if(zeroCount > 5) then
-			print('not in DinoTimers Channel')
+			print('Not in DinoTimers Channel.. Joining Channel..')
 			DEFAULT_CHAT_FRAME.editBox:SetText("/join DinoTimers") ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
 			return true
 		end
 	end
 		
+end
+
+sendDiedAtMessage = function(dino)
+	DEFAULT_CHAT_FRAME.editBox:SetText("/" .. channelNumber .. " DinoTimers:" .. dino) ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
 end
 
 secondsFormat = function(t)
@@ -578,6 +623,7 @@ diedAt = function(dino)
 		startButton6:SetText("Reset")
 		updateNow = true
 	end
+
 end
 
 timeDead = function(dino)
