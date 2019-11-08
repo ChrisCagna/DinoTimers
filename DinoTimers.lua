@@ -54,8 +54,11 @@ local function handler(msg, editBox)
 	elseif(msg == "NW" or msg == "N" or msg == "E" or msg == "W" or msg == "SW" or msg == "SE") then
 		diedAt(msg)
 	elseif(msg == "bigger") then
-		-- fontSize = fontSize + 4
-		-- setDefaults()
+		fontSize = fontSize + 4
+		adjustSize()
+	elseif(msg == "smaller") then
+		fontSize = fontSize - 4
+		adjustSize()
 	else
 		DEFAULT_CHAT_FRAME:AddMessage(dtClr .. "Dino Timers Commands: |r")
 	end
@@ -107,79 +110,82 @@ MainFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
 MainFrame:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
 
 ChatFrame:RegisterEvent("CHAT_MSG_CHANNEL")
+
 end
 
 setDefaults = function()
-MainFrame:SetPoint("CENTER")
-MainFrame:SetSize(200,200)
-MainFrame:RegisterForDrag("LeftButton")
-MainFrame:SetMovable(true)
-MainFrame:SetAlpha(1)
-MainFrame:SetClampedToScreen(true)
-MainFrame:SetUserPlaced(true)
-MainFrame:EnableMouse()
-MainFrame:SetScript("OnUpdate", MainFrame.OnUpdate)
+	MainFrame:SetPoint("CENTER")
+	MainFrame:SetSize(200,200)
+	MainFrame:RegisterForDrag("LeftButton")
+	MainFrame:SetMovable(true)
+	MainFrame:SetAlpha(1)
+	MainFrame:SetClampedToScreen(true)
+	MainFrame:SetUserPlaced(true)
+	MainFrame:EnableMouse()
+	MainFrame:SetScript("OnUpdate", MainFrame.OnUpdate)
 
 
-text:SetPoint("TOPLEFT")
-text:SetJustifyH("LEFT")
---text:SetFont(DinoTimersFont, 10, "OUTLINE")
-text:SetText(dtClr .. "|TInterface\\Icons\\Inv_misc_pelt_03:16|tSession:            \n ")
-text:SetFont(DinoTimersFont, fontSize, fontFlags)
+	text:SetPoint("TOPLEFT")
+	text:SetJustifyH("LEFT")
+	--text:SetFont(DinoTimersFont, 10, "OUTLINE")
+	text:SetText(dtClr .. "|TInterface\\Icons\\Inv_misc_pelt_03:16|tSession:            \n ")
+	text:SetFont(DinoTimersFont, fontSize, fontFlags)
 
 
-text1:SetPoint("TOPLEFT",text,"BOTTOMLEFT",0,0)
-text1:SetText(gryClr .. "North West:")
-text1:SetFont(DinoTimersFont, fontSize, fontFlags)
+	text1:SetPoint("TOPLEFT",text,"BOTTOMLEFT",0,0)
+	text1:SetText(gryClr .. "North West:")
+	text1:SetFont(DinoTimersFont, fontSize, fontFlags)
 
-text2:SetPoint("TOPLEFT",text1,"BOTTOMLEFT",0,-3)
-text2:SetText(gryClr .. "North:")
-text2:SetFont(DinoTimersFont, fontSize, fontFlags)
+	text2:SetPoint("TOPLEFT",text1,"BOTTOMLEFT",0,-3)
+	text2:SetText(gryClr .. "North:")
+	text2:SetFont(DinoTimersFont, fontSize, fontFlags)
 
-text3:SetPoint("TOPLEFT",text2,"BOTTOMLEFT",0,-3)
-text3:SetText(gryClr .. "East:")
-text3:SetFont(DinoTimersFont, fontSize, fontFlags)
+	text3:SetPoint("TOPLEFT",text2,"BOTTOMLEFT",0,-3)
+	text3:SetText(gryClr .. "East:")
+	text3:SetFont(DinoTimersFont, fontSize, fontFlags)
 
-text4:SetPoint("TOPLEFT",text3,"BOTTOMLEFT",0,-3)
-text4:SetText(gryClr .. "West:")
-text4:SetFont(DinoTimersFont, fontSize, fontFlags)
+	text4:SetPoint("TOPLEFT",text3,"BOTTOMLEFT",0,-3)
+	text4:SetText(gryClr .. "West:")
+	text4:SetFont(DinoTimersFont, fontSize, fontFlags)
 
-text5:SetPoint("TOPLEFT",text4,"BOTTOMLEFT",0,-3)
-text5:SetText(gryClr .. "South West:")
-text5:SetFont(DinoTimersFont, fontSize, fontFlags)
+	text5:SetPoint("TOPLEFT",text4,"BOTTOMLEFT",0,-3)
+	text5:SetText(gryClr .. "South West:")
+	text5:SetFont(DinoTimersFont, fontSize, fontFlags)
 
-text6:SetPoint("TOPLEFT",text5,"BOTTOMLEFT",0,-3)
-text6:SetText(gryClr .. "South East:")
-text6:SetFont(DinoTimersFont, fontSize, fontFlags)
+	text6:SetPoint("TOPLEFT",text5,"BOTTOMLEFT",0,-3)
+	text6:SetText(gryClr .. "South East:")
+	text6:SetFont(DinoTimersFont, fontSize, fontFlags)
 
-timer:SetPoint("TOPLEFT",text,"TOPRIGHT")
-timer:SetText(gryClr .. "00:00")
-timer:SetFont(DinoTimersFont, fontSize, fontFlags)
+	timer:SetPoint("TOPLEFT",text,"TOPRIGHT")
+	timer:SetText(gryClr .. "00:00")
+	timer:SetFont(DinoTimersFont, fontSize, fontFlags)
 
-timer1:SetPoint("TOPLEFT",text,"BOTTOMRIGHT",0,0)
-timer1:SetText(gryClr .. "00:00")
-timer1:SetFont(DinoTimersFont, fontSize, fontFlags)
+	timer1:SetPoint("TOPLEFT",text,"BOTTOMRIGHT",0,0)
+	timer1:SetText(gryClr .. "00:00")
+	timer1:SetFont(DinoTimersFont, fontSize, fontFlags)
 
-timer2:SetPoint("TOPLEFT",timer1,"BOTTOMLEFT",0,-3)
-timer2:SetText(gryClr .. "00:00")
-timer2:SetFont(DinoTimersFont, fontSize, fontFlags)
+	timer2:SetPoint("TOPLEFT",timer1,"BOTTOMLEFT",0,-3)
+	timer2:SetText(gryClr .. "00:00")
+	timer2:SetFont(DinoTimersFont, fontSize, fontFlags)
 
-timer3:SetPoint("TOPLEFT",timer2,"BOTTOMLEFT",0,-3)
-timer3:SetText(gryClr .. "00:00")
-timer3:SetFont(DinoTimersFont, fontSize, fontFlags)
+	timer3:SetPoint("TOPLEFT",timer2,"BOTTOMLEFT",0,-3)
+	timer3:SetText(gryClr .. "00:00")
+	timer3:SetFont(DinoTimersFont, fontSize, fontFlags)
 
-timer4:SetPoint("TOPLEFT",timer3,"BOTTOMLEFT",0,-3)
-timer4:SetText(gryClr .. "00:00")
-timer4:SetFont(DinoTimersFont, fontSize, fontFlags)
+	timer4:SetPoint("TOPLEFT",timer3,"BOTTOMLEFT",0,-3)
+	timer4:SetText(gryClr .. "00:00")
+	timer4:SetFont(DinoTimersFont, fontSize, fontFlags)
 
-timer5:SetPoint("TOPLEFT",timer4,"BOTTOMLEFT",0,-3)
-timer5:SetText(gryClr .. "00:00")
-timer5:SetFont(DinoTimersFont, fontSize, fontFlags)
+	timer5:SetPoint("TOPLEFT",timer4,"BOTTOMLEFT",0,-3)
+	timer5:SetText(gryClr .. "00:00")
+	timer5:SetFont(DinoTimersFont, fontSize, fontFlags)
 
-timer6:SetPoint("TOPLEFT",timer5,"BOTTOMLEFT",0,-3)
-timer6:SetText(gryClr .. "00:00")
-timer6:SetFont(DinoTimersFont, fontSize, fontFlags)
+	timer6:SetPoint("TOPLEFT",timer5,"BOTTOMLEFT",0,-3)
+	timer6:SetText(gryClr .. "00:00")
+	timer6:SetFont(DinoTimersFont, fontSize, fontFlags)
+end
 
+setButtonDefaults = function()
 resetButton:SetPoint("TOPRIGHT",text, "TOPLEFT",-2,0)
 resetButton:SetWidth(timer:GetStringWidth()/1.5)
 resetButton:SetHeight(text:GetStringHeight()/2)
@@ -244,6 +250,97 @@ backdrop =
 }
 
 end
+
+adjustSize = function()
+	
+	text:SetFont(DinoTimersFont, fontSize, fontFlags)
+	
+	text1:SetFont(DinoTimersFont, fontSize, fontFlags)
+
+	text2:SetFont(DinoTimersFont, fontSize, fontFlags)
+
+	text3:SetFont(DinoTimersFont, fontSize, fontFlags)
+
+	text4:SetFont(DinoTimersFont, fontSize, fontFlags)
+
+	text5:SetFont(DinoTimersFont, fontSize, fontFlags)
+
+	text6:SetFont(DinoTimersFont, fontSize, fontFlags)
+
+	timer:SetFont(DinoTimersFont, fontSize, fontFlags)
+
+	timer1:SetFont(DinoTimersFont, fontSize, fontFlags)
+
+	timer2:SetFont(DinoTimersFont, fontSize, fontFlags)
+
+	timer3:SetFont(DinoTimersFont, fontSize, fontFlags)
+
+	timer4:SetFont(DinoTimersFont, fontSize, fontFlags)
+
+	timer5:SetFont(DinoTimersFont, fontSize, fontFlags)
+
+	timer6:SetFont(DinoTimersFont, fontSize, fontFlags)
+	
+	width = text:GetStringWidth() + timer:GetStringWidth()
+	height = text:GetStringHeight() + (text1:GetStringHeight() * 6) + 12
+	MainFrame:SetSize(width,height)
+	
+	resetButton:SetWidth(timer:GetStringWidth()/1.5)
+	resetButton:SetHeight(text:GetStringHeight()/2)
+
+	startButton1:SetWidth(timer:GetStringWidth()/1.5)
+	startButton1:SetHeight(text1:GetStringHeight())
+
+	startButton2:SetWidth(timer:GetStringWidth()/1.5)
+	startButton2:SetHeight(text2:GetStringHeight())
+
+	startButton3:SetWidth(timer:GetStringWidth()/1.5)
+	startButton3:SetHeight(text3:GetStringHeight())
+
+	startButton4:SetWidth(timer:GetStringWidth()/1.5)
+	startButton4:SetHeight(text4:GetStringHeight())
+
+	startButton5:SetWidth(timer:GetStringWidth()/1.5)
+	startButton5:SetHeight(text5:GetStringHeight())
+
+	startButton6:SetWidth(timer:GetStringWidth()/1.5)
+	startButton6:SetHeight(text6:GetStringHeight())
+
+	syncButton:SetWidth(timer:GetStringWidth()*2)
+	syncButton:SetHeight(text6:GetStringHeight()*2)
+	
+	
+end
+
+createOptionsPannel = function()
+	panel = CreateFrame("Frame")
+	panel.name = "DinoTimers"
+	InterfaceOptions_AddCategory(panel)
+	
+	panel.title = panel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	panel.title:SetPoint("TOP",0,-10)
+	panel.title:SetFont(DinoTimersFont, 30, fontFlags)
+	panel.title:SetText(dtClr .. "DinoTimers")
+	
+	panel.subtext = panel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	panel.subtext:SetPoint("TOP", panel.title, "BOTTOM",0,-5)
+	panel.subtext:SetFont(DinoTimersFont, 12, fontFlags)
+	panel.subtext:SetText(dtClr .. "Created by Vanishd")
+	
+	panel.FontSlider = CreateFrame("Slider", "DinoTimersFontSlider", panel, "OptionsSliderTemplate")
+	panel.FontSlider:SetOrientation('HORIZONTAL')
+	panel.FontSlider.tooltopText = 'Text Size'
+	_G["DinoTimersFontSliderLow"]:SetText("10")
+	_G["DinoTimersFontSliderHigh"]:SetText("40")
+	_G["DinoTimersFontSliderText"]:SetText("Font Size ("..fontSize..")");
+	panel.FontSlider:SetPoint("TOPRIGHT", panel.subtext, "BOTTOMLEFT", -30, -30)
+	panel.FontSlider:SetMinMaxValues(10,40)
+	panel.FontSlider:SetValueStep(1)
+	panel.FontSlider:SetValue(fontSize)
+	panel.FontSlider:SetThumbTexture("Interface\\Buttons\\UI-SliderBar-Button-Horizontal")
+end
+
+
 
 resetNW = function()
 	NW = 0;
@@ -325,16 +422,13 @@ updateCurrentTime()
 
 end
 
-adjustSize = function()
-	width = text:GetStringWidth() + timer:GetStringWidth()
-	height = text:GetStringHeight() + (text1:GetStringHeight() * 6) + 9
-	MainFrame:SetSize(width,height)
-end
 
 createFrames()
 backdropDefault()
 setDefaults()
+setButtonDefaults()
 adjustSize()
+createOptionsPannel()
 
 function MainFrame:OnUpdate(arg1) -- MAIN UPDATE FUNCTION!
 	timeSinceUpdate = timeSinceUpdate + arg1
@@ -472,7 +566,7 @@ MainFrame:SetScript("OnEvent", -- THE GOOD SHIT - The call that starts the entir
 		local _, eventType, _, sourceGUID, sourceName, _, _, destGUID, destName, _, _, spellID = CombatLogGetCurrentEventInfo()
 
 			if(eventType == "UNIT_DIED" and string.find(destName, mobName)) then
-				diedAt(getPlayerArea(getPlayerPosition()))
+				--diedAt(getPlayerArea(getPlayerPosition()))
 				sendDiedAtMessage(getPlayerArea(getPlayerPosition()))
 			end
 	elseif(event == "PLAYER_TARGET_CHANGED") then
@@ -498,6 +592,14 @@ ChatFrame:SetScript("OnEvent",
 				--print(string.sub('ITS WORKING', -7))
 			end
 		end
+end)
+
+panel.FontSlider:SetScript("OnValueChanged", function(self, newValue)
+	newValue = floor(newValue+0.5)
+	fontSize = newValue
+	_G["DinoTimersFontSliderText"]:SetText("Font Size ("..fontSize..")");
+	panel.FontSlider:SetValue(newValue)
+	adjustSize()	
 end)
 
 getPlayerPosition = function()
@@ -581,7 +683,9 @@ addonSyncFunc = function()
 end
 
 sendDiedAtMessage = function(dino)
-	DEFAULT_CHAT_FRAME.editBox:SetText("/" .. channelNumber .. " DinoTimers:" .. dino) ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
+	DEFAULT_CHAT_FRAME.editBox:SetText("/" .. channelNumber .. " DinoTimers:" .. dino) 
+	ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox)
+	DEFAULT_CHAT_FRAME.editBox:SetText("") 
 end
 
 secondsFormat = function(t)
