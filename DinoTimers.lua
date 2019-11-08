@@ -39,8 +39,11 @@ local dinoFoundSoundInterval = 45
 
 local mobName = "Devilsaur"
 local addonSync = false
---local addonDisconnect = false
+local connected = false
 local channelNumber = 0
+
+local previousZone = ""
+local goalZone = "Un'Goro Crater"
 
 
 SLASH_DINOTIMERS1 = "/dt"
@@ -50,7 +53,7 @@ local function handler(msg, editBox)
 	if(msg == "test") then
 		--addonSyncFunc()
 		--DEFAULT_CHAT_FRAME.editBox:SetText("/8 NW") ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
-		addonSync = true
+		MainFrame:Hide()
 	elseif(msg == "NW" or msg == "N" or msg == "E" or msg == "W" or msg == "SW" or msg == "SE") then
 		diedAt(msg)
 	elseif(msg == "bigger") then
@@ -67,13 +70,21 @@ SlashCmdList["DINOTIMERS"] = handler;
 
 local Init_Frame = CreateFrame("Frame")
 Init_Frame:RegisterEvent("ADDON_LOADED")
+Init_Frame:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+Init_Frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 Init_Frame:SetScript("OnEvent",
 	function(self, event, ...)
 		local arg1 = ...
 		if(arg1 == "DinoTimers") then
 			DEFAULT_CHAT_FRAME:AddMessage("|TInterface\\Icons\\Inv_misc_pelt_03:16|t" .. dtClr .. "Dino Timers Loaded!|r|TInterface\\Icons\\Inv_misc_pelt_03:16|t")
 		end
-		
+		if(event=="ZONE_CHANGED_NEW_AREA") then
+			updateLocation()
+		end
+		if(event=="PLAYER_ENTERING_WORLD") then
+			previousZone = GetZoneText()
+			updateLocation()
+		end
 end)
 
 createFrames = function()
@@ -96,14 +107,14 @@ timer4=MainFrame:CreateFontString(nil,"OVERLAY","GameFontNormal")
 timer5=MainFrame:CreateFontString(nil,"OVERLAY","GameFontNormal")
 timer6=MainFrame:CreateFontString(nil,"OVERLAY","GameFontNormal")
 
-resetButton = CreateFrame("Button","startButton1",UIParent,"UIPanelButtonGrayTemplate")
-startButton1 = CreateFrame("Button","startButton1",UIParent,"UIPanelButtonGrayTemplate")
-startButton2 = CreateFrame("Button","startButton1",UIParent,"UIPanelButtonGrayTemplate")
-startButton3 = CreateFrame("Button","startButton1",UIParent,"UIPanelButtonGrayTemplate")
-startButton4 = CreateFrame("Button","startButton1",UIParent,"UIPanelButtonGrayTemplate")
-startButton5 = CreateFrame("Button","startButton1",UIParent,"UIPanelButtonGrayTemplate")
-startButton6 = CreateFrame("Button","startButton1",UIParent,"UIPanelButtonGrayTemplate")
-syncButton = CreateFrame("Button","startButton1",UIParent,"UIPanelButtonGrayTemplate")
+resetButton = CreateFrame("Button","startButton1",MainFrame,"UIPanelButtonGrayTemplate")
+startButton1 = CreateFrame("Button","startButton1",MainFrame,"UIPanelButtonGrayTemplate")
+startButton2 = CreateFrame("Button","startButton1",MainFrame,"UIPanelButtonGrayTemplate")
+startButton3 = CreateFrame("Button","startButton1",MainFrame,"UIPanelButtonGrayTemplate")
+startButton4 = CreateFrame("Button","startButton1",MainFrame,"UIPanelButtonGrayTemplate")
+startButton5 = CreateFrame("Button","startButton1",MainFrame,"UIPanelButtonGrayTemplate")
+startButton6 = CreateFrame("Button","startButton1",MainFrame,"UIPanelButtonGrayTemplate")
+syncButton = CreateFrame("Button","startButton1",MainFrame,"UIPanelButtonGrayTemplate")
 
 MainFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 MainFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
@@ -340,8 +351,6 @@ createOptionsPannel = function()
 	panel.FontSlider:SetThumbTexture("Interface\\Buttons\\UI-SliderBar-Button-Horizontal")
 end
 
-
-
 resetNW = function()
 	NW = 0;
 	text1:SetPoint("TOPLEFT",text,"BOTTOMLEFT",0,0)
@@ -447,7 +456,9 @@ function MainFrame:OnUpdate(arg1) -- MAIN UPDATE FUNCTION!
 		if(addonSync) then
 			addonSyncFunc()
 		end
-			
+		
+		updateSyncButton()
+		
 -- actual code end
 		if(updateNow == false) then
 			timeSinceUpdate = 0
@@ -602,6 +613,33 @@ panel.FontSlider:SetScript("OnValueChanged", function(self, newValue)
 	adjustSize()	
 end)
 
+StaticPopupDialogs["AskToHide"] = {
+	text = "Do you want to hide DinoTimers?",
+	button1 = "Yes",
+	button2 = "No",
+	OnAccept = function()
+		hideMainFrame()
+	end,
+	timeout = 0,
+	whileDead = true,
+	hideOnEscape = true,
+	preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+}
+
+StaticPopupDialogs["AskToReset"] = {
+	text = "Reset DinoTimers?",
+	button1 = "Yes",
+	button2 = "No",
+	OnAccept = function()
+		reset()
+		updateNow = true
+	end,
+	timeout = 0,
+	whileDead = true,
+	hideOnEscape = true,
+	preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+}
+
 getPlayerPosition = function()
 	local mapID
 	mapID = C_Map.GetBestMapForUnit("player")
@@ -680,6 +718,54 @@ addonSyncFunc = function()
 		end
 	end
 		
+end
+
+checkConnection = function()
+	local zeroCount = 0
+	local count = 1
+	while(true) do
+		local id, name = GetChannelName(count)
+		if(name ~= nil) then
+			if(string.find(name, "DinoTimers")) then 
+				return true
+			end
+		else
+			zeroCount = zeroCount + 1
+		end
+		count = count + 1
+		if(zeroCount > 5) then
+			return false
+		end
+	end
+		
+end
+
+updateLocation = function()
+	if(GetZoneText() == goalZone) then
+		MainFrame:Show()
+		if(goalZone ~= previousZone and GetZoneText() == goalZone) then
+			StaticPopup_Show ("AskToReset")	
+		end	
+	elseif(previousZone == goalZone and GetZoneText() ~= goalZone) then
+		StaticPopup_Show ("AskToHide")	
+	else
+		hideMainFrame()
+	end
+	previousZone = GetZoneText()
+end
+
+hideMainFrame = function()
+	MainFrame:Hide()
+	DEFAULT_CHAT_FRAME.editBox:SetText("/leave DinoTimers") ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
+	channelNumber = 0
+end
+
+updateSyncButton = function()
+	if(syncButton:GetText() == "Connect" and checkConnection()) then
+		addonSyncFunc()
+	elseif(not checkConnection() and syncButton:GetText() == "|cff00ff00Connected") then
+		syncButton:SetText("Connect")			
+	end
 end
 
 sendDiedAtMessage = function(dino)
