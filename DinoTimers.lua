@@ -51,9 +51,11 @@ SLASH_DINOTIMERS1 = "/dt"
 -- SLASH_DINOTIMERS3 = "/Dt"
 local function handler(msg, editBox)
 	if(msg == "test") then
-		--addonSyncFunc()
-		--DEFAULT_CHAT_FRAME.editBox:SetText("/8 NW") ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox, 0)
-		MainFrame:Hide()
+				if(not connected) then
+					diedAt(getPlayerArea(getPlayerPosition()))
+				else
+					sendDiedAtMessage(getPlayerArea(getPlayerPosition()))
+				end
 	elseif(msg == "NW" or msg == "N" or msg == "E" or msg == "W" or msg == "SW" or msg == "SE") then
 		diedAt(msg)
 	elseif(msg == "bigger") then
@@ -577,8 +579,11 @@ MainFrame:SetScript("OnEvent", -- THE GOOD SHIT - The call that starts the entir
 		local _, eventType, _, sourceGUID, sourceName, _, _, destGUID, destName, _, _, spellID = CombatLogGetCurrentEventInfo()
 
 			if(eventType == "UNIT_DIED" and string.find(destName, mobName)) then
-				--diedAt(getPlayerArea(getPlayerPosition()))
-				sendDiedAtMessage(getPlayerArea(getPlayerPosition()))
+				if(not connected) then
+					diedAt(getPlayerArea(getPlayerPosition()))
+				else
+					sendDiedAtMessage(getPlayerArea(getPlayerPosition()))
+				end
 			end
 	elseif(event == "PLAYER_TARGET_CHANGED") then
 		local arg1 = ...
@@ -727,6 +732,7 @@ checkConnection = function()
 		local id, name = GetChannelName(count)
 		if(name ~= nil) then
 			if(string.find(name, "DinoTimers")) then 
+				connected = true
 				return true
 			end
 		else
@@ -734,6 +740,7 @@ checkConnection = function()
 		end
 		count = count + 1
 		if(zeroCount > 5) then
+		connected = false
 			return false
 		end
 	end
