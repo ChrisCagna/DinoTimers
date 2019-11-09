@@ -43,9 +43,11 @@ local addonSync = false
 local connected = false
 local channelNumber = 0
 
+
 local previousZone = ""
 local goalZone = "Un'Goro Crater"
 
+local currentShareButton;
 
 SLASH_DINOTIMERS1 = "/dt"
 -- SLASH_DINOTIMERS2 = "/DT"
@@ -104,7 +106,7 @@ backdrop =
     bgFile = background,
     edgeFile = edge,
     tile = false, tileSize = 16, edgeSize = 16,
-    insets = { left = 0, right = 0, top = 0, bottom = -10 }
+    insets = { left = 0, right = 0, top = 0, bottom = 0 }
 }
 
 end
@@ -112,7 +114,6 @@ end
 createFrames = function()
 MainFrame=CreateFrame("Frame","MainFrame",UIParent)
 ChatFrame=CreateFrame("Frame","ChatFrame",UIParent)
---ReportFrame=CreateFrame("Frame","ReportFrame",UIParent)
 
 text=MainFrame:CreateFontString(nil,"OVERLAY","GameFontNormal")
 text1=MainFrame:CreateFontString(nil,"OVERLAY","GameFontNormal")
@@ -147,8 +148,6 @@ shareButton4 = CreateFrame("Button","shareButton4",MainFrame,"UIPanelButtonGrayT
 shareButton5 = CreateFrame("Button","shareButton5",MainFrame,"UIPanelButtonGrayTemplate")
 shareButton6 = CreateFrame("Button","shareButton6",MainFrame,"UIPanelButtonGrayTemplate")
 
---reportOption1 = ReportFrame:CreateFrame("Frame","reportOption1",UIParent)
-
 MainFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 MainFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
 MainFrame:RegisterEvent("UPDATE_MOUSEOVER_UNIT")
@@ -159,7 +158,7 @@ end
 
 setDefaults = function()
 	MainFrame:SetPoint("CENTER")
-	MainFrame:SetSize(200,200)
+	--MainFrame:SetSize(200,200)
 	MainFrame:RegisterForDrag("LeftButton")
 	MainFrame:SetMovable(true)
 	MainFrame:SetAlpha(1)
@@ -167,13 +166,6 @@ setDefaults = function()
 	MainFrame:SetUserPlaced(true)
 	MainFrame:EnableMouse()
 	MainFrame:SetScript("OnUpdate", MainFrame.OnUpdate)
-	
-	-- ReportFrame:SetPoint("LEFT",shareButton,"RIGHT")
-	-- ReportFrame:SetSize(200,200)
-	-- ReportFrame:SetAlpha(1)
-	-- ReportFrame:EnableMouse()
-	-- ReportFrame:SetBackdrop(backdrop)
-
 
 	text:SetPoint("TOPLEFT")
 	text:SetJustifyH("LEFT")
@@ -328,6 +320,44 @@ shareButton6:SetText("Share")
 shareButton6:RegisterForClicks("LeftButtonUp")
 end
 
+createMenuFrame = function()
+	ReportOptions = CreateFrame("Frame","ReportOptions",UIParent)
+	ReportOptions:SetPoint("LEFT", shareButton, "RIGHT")
+	ReportOptions:EnableMouse()
+	--ReportOptions:SetBackdrop(backdrop)
+	ReportOptions:SetAlpha(1)
+	
+	ReportOption1 = CreateFrame("Frame","ReportOption1", ReportOptions)
+	--ReportOption1:SetBackdrop(backdrop)
+	ReportOption1Text = ReportOption1:CreateFontString(nil,"OVERLAY","GameFontNormal")
+	ReportOption1Text:SetPoint("CENTER")
+	ReportOption1Text:SetText("DinoChannel")
+	ReportOption1Text:SetFont(DinoTimersFont, fontSize/1.5, fontFlags)
+	ReportOption1:SetSize(ReportOption1Text:GetStringWidth(),ReportOption1Text:GetStringHeight())
+	ReportOption1:SetPoint("TOPLEFT", ReportOptions, "TOPLEFT")
+	
+	ReportOption2 = CreateFrame("Frame","ReportOption2", ReportOptions)
+	--ReportOption2:SetBackdrop(backdrop)
+	ReportOption2Text = ReportOption2:CreateFontString(nil,"OVERLAY","GameFontNormal")
+	ReportOption2Text:SetPoint("CENTER")
+	ReportOption2Text:SetText("Whisper")
+	ReportOption2Text:SetFont(DinoTimersFont, fontSize/1.5, fontFlags)
+	ReportOption2:SetSize(ReportOption1Text:GetStringWidth(),ReportOption1Text:GetStringHeight())
+	ReportOption2:SetPoint("TOPLEFT", ReportOption1, "BOTTOMLEFT")
+
+	ReportOption3 = CreateFrame("Frame","ReportOption3", ReportOptions)
+	--ReportOption3:SetBackdrop(backdrop)
+	ReportOption3Text = ReportOption3:CreateFontString(nil,"OVERLAY","GameFontNormal")
+	ReportOption3Text:SetPoint("BOTTOM")
+	ReportOption3Text:SetText("Party")
+	ReportOption3Text:SetFont(DinoTimersFont, fontSize/1.5, fontFlags)
+	ReportOption3:SetSize(ReportOption1Text:GetStringWidth(),ReportOption1Text:GetStringHeight())
+	ReportOption3:SetPoint("TOPLEFT", ReportOption2, "BOTTOMLEFT")
+	
+	ReportOptions:SetSize(ReportOption1Text:GetStringWidth(),ReportOption1Text:GetStringHeight()*3)
+	ReportOptions:Hide()
+end
+
 adjustSize = function()
 	
 	text:SetFont(DinoTimersFont, fontSize, fontFlags)
@@ -406,6 +436,16 @@ adjustSize = function()
 
 	shareButton6:SetWidth(timer:GetStringWidth()/1.5)
 	shareButton6:SetHeight(text6:GetStringHeight())
+	
+	ReportOption1:SetSize(ReportOption1Text:GetStringWidth(),ReportOption1Text:GetStringHeight())
+	ReportOption1Text:SetFont(DinoTimersFont, fontSize/1.5, fontFlags)
+
+	ReportOption2:SetSize(ReportOption1Text:GetStringWidth(),ReportOption1Text:GetStringHeight())
+	ReportOption2Text:SetFont(DinoTimersFont, fontSize/1.5, fontFlags)
+	
+	ReportOption3:SetSize(ReportOption1Text:GetStringWidth(),ReportOption1Text:GetStringHeight())
+	ReportOption3Text:SetFont(DinoTimersFont, fontSize/1.5, fontFlags)
+	ReportOptions:SetSize(ReportOption1Text:GetStringWidth(),ReportOption1Text:GetStringHeight()*3)
 	
 end
 
@@ -596,14 +636,68 @@ share = function(self)
 			shareTimer("SE", timeDead(SE))
 		end
 	end
+	ReportOptions:Hide()
 end
 
 createFrames()
 backdropDefault()
 setDefaults()
 setButtonDefaults()
-adjustSize()
+
 createOptionsPannel()
+createMenuFrame()
+adjustSize()
+
+ReportOption1:SetScript("OnEnter", function()
+	ReportOption1:SetBackdrop(backdrop)
+end)
+
+ReportOption2:SetScript("OnEnter", function()
+	ReportOption2:SetBackdrop(backdrop)
+end)
+
+ReportOption3:SetScript("OnEnter", function()
+	ReportOption3:SetBackdrop(backdrop)
+end)
+
+ReportOption1:SetScript("OnLeave", function()
+	ReportOption1:SetBackdropColor(1,1,1,0)
+end)
+
+ReportOption2:SetScript("OnLeave", function()
+	ReportOption2:SetBackdropColor(1,1,1,0)
+end)
+
+ReportOption3:SetScript("OnLeave", function()
+	ReportOption3:SetBackdropColor(1,1,1,0)
+end)
+
+ReportOption1:SetScript("OnMouseDown", function(self, button)
+	ReportOption1Text:SetFont(DinoTimersFont, fontSize/2, fontFlags)
+end)
+
+ReportOption2:SetScript("OnMouseDown", function(self, button)
+	ReportOption2Text:SetFont(DinoTimersFont, fontSize/2, fontFlags)
+end)
+
+ReportOption3:SetScript("OnMouseDown", function(self, button)
+	ReportOption3Text:SetFont(DinoTimersFont, fontSize/2, fontFlags)
+end)
+
+ReportOption1:SetScript("OnMouseUp", function(self, button)
+	ReportOption1Text:SetFont(DinoTimersFont, fontSize/1.5, fontFlags)
+	share(currentShareButton)
+end)
+
+ReportOption2:SetScript("OnMouseUp", function(self, button)
+	ReportOption2Text:SetFont(DinoTimersFont, fontSize/1.5, fontFlags)
+	StaticPopup_Show ("GetWhisperName")	
+	ReportOptions:Hide()
+end)
+
+ReportOption3:SetScript("OnMouseUp", function(self, button)
+	ReportOption3Text:SetFont(DinoTimersFont, fontSize/1.5, fontFlags)
+end)
 
 function MainFrame:OnUpdate(arg1) -- MAIN UPDATE FUNCTION!
 	timeSinceUpdate = timeSinceUpdate + arg1
@@ -721,31 +815,45 @@ syncButton:SetScript('OnLeave', function()
 end)
 
 shareButton:SetScript("OnMouseUp", function(self, button)
-	share(self)
+	ReportOptions:Show()
+	ReportOptions:SetPoint("LEFT", self, "RIGHT")
+	currentShareButton = self
 end)
 
 shareButton1:SetScript("OnMouseUp", function(self, button)
-	share(self)
+	ReportOptions:Show()
+	ReportOptions:SetPoint("LEFT", self, "RIGHT")
+	currentShareButton = self
 end)
 
 shareButton2:SetScript("OnMouseUp", function(self, button)
-	share(self)
+	ReportOptions:Show()
+	ReportOptions:SetPoint("LEFT", self, "RIGHT")
+	currentShareButton = self
 end)
 
 shareButton3:SetScript("OnMouseUp", function(self, button)
-	share(self)
+	ReportOptions:Show()
+	ReportOptions:SetPoint("LEFT", self, "RIGHT")
+	currentShareButton = self
 end)
 
 shareButton4:SetScript("OnMouseUp", function(self, button)
-	share(self)
+	ReportOptions:Show()
+	ReportOptions:SetPoint("LEFT", self, "RIGHT")
+	currentShareButton = self
 end)
 
 shareButton5:SetScript("OnMouseUp", function(self, button)
-	share(self)
+	ReportOptions:Show()
+	ReportOptions:SetPoint("LEFT", self, "RIGHT")
+	currentShareButton = self
 end)
 
 shareButton6:SetScript("OnMouseUp", function(self, button)
-	share(self)
+	ReportOptions:Show()
+	ReportOptions:SetPoint("LEFT", self, "RIGHT")
+	currentShareButton = self
 end)
 
 MainFrame:SetScript("OnMouseDown", function(self, button)
@@ -836,6 +944,20 @@ StaticPopupDialogs["AskToReset"] = {
 		reset()
 		updateNow = true
 	end,
+	timeout = 0,
+	whileDead = true,
+	hideOnEscape = true,
+	preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+}
+
+StaticPopupDialogs["GetWhisperName"] = {
+	text = "Whisper Target's Name",
+	button1 = "Send",
+	OnAccept = function(self)
+		local text = self.editBox:GetText()
+		whisperTimer(currentShareButton, text)
+	end,
+	hasEditBox = true,
 	timeout = 0,
 	whileDead = true,
 	hideOnEscape = true,
@@ -984,6 +1106,38 @@ shareTimer = function(dino, offset)
 	.. "," .. offset) 
 	ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox)
 	DEFAULT_CHAT_FRAME.editBox:SetText("") 
+end
+
+whisperTimer = function(self, playerName)
+	local currentDino = ""
+	if(self == shareButton) then
+		--shareAll()	
+	elseif(self == shareButton1) then
+		currentDino = "NW"
+		currentDinoTimer = NW
+	elseif(self == shareButton2) then
+		currentDino = "N"
+		currentDinoTimer = N
+	elseif(self == shareButton3) then
+		currentDino = "E"
+		currentDinoTimer = E
+	elseif(self == shareButton4) then
+		currentDino = "W"
+		currentDinoTimer = W
+	elseif(self == shareButton5) then
+		currentDino = "SW"
+		currentDinoTimer = SW
+	elseif(self == shareButton6) then
+		currentDino = "SE"
+		currentDinoTimer = SE
+	end
+	
+	if(currentDino ~= "" and currentDinoTimer ~= 0) then
+		DEFAULT_CHAT_FRAME.editBox:SetText("/w " .. playerName .. " " .. currentDino .. " Has been dead for: " .. secondsFormat(timeDead(currentDinoTimer))) 
+		ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox)
+		DEFAULT_CHAT_FRAME.editBox:SetText("") 
+	end
+
 end
 
 secondsFormat = function(t)

@@ -15,4 +15,14 @@ Connectivity Modes:
 		:Possibly add feature to only accept timers from aproved users
 		
 Sharing Current Timers:
-	Hover timer, right click, option to share
+
+ToDO:
+	1) Add Check for Connectivity before sharing to channel
+	2) Add password control for channel
+	3) Add individual people to accept messages from
+	4) Share avenue options (whisper, channel, party)
+	5) Fix overlapping timer
+	6) Make sound only play on unique duno
+	7) map overlay
+	8) Fix incorrect whisper on dead timers
+	9) make whisper all function
