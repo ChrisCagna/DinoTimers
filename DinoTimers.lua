@@ -21,6 +21,7 @@ local updateInterval = 1
 
 local tStart = time() -- time when logged on
 local sessionTime = 0
+local sessionTimeOffset = 3600 -- pushes session time 1 hr ahead to avoid -dino death times
 local timeSinceUpdate = 0;
 local updateNow = false;
 
@@ -51,11 +52,16 @@ SLASH_DINOTIMERS1 = "/dt"
 -- SLASH_DINOTIMERS3 = "/Dt"
 local function handler(msg, editBox)
 	if(msg == "test") then
-				if(not connected) then
-					diedAt(getPlayerArea(getPlayerPosition()))
-				else
-					sendDiedAtMessage(getPlayerArea(getPlayerPosition()))
-				end
+		--diedAt("E","5")
+		local chatMessage = "DinoTimers:E,65"
+		local temp = string.match(chatMessage, ':(.*),')
+		local temp2 = string.match(chatMessage, ',(.*)')
+			if(temp2 == "") then
+				temp2 = 0
+			end
+		print(temp)
+		print(temp2)
+		diedAt(temp, temp2)
 	elseif(msg == "NW" or msg == "N" or msg == "E" or msg == "W" or msg == "SW" or msg == "SE") then
 		diedAt(msg)
 	elseif(msg == "bigger") then
@@ -89,9 +95,24 @@ Init_Frame:SetScript("OnEvent",
 		end
 end)
 
+backdropDefault = function()
+
+background = "Interface\\TutorialFrame\\TutorialFrameBackground"
+edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border"
+backdrop =
+{
+    bgFile = background,
+    edgeFile = edge,
+    tile = false, tileSize = 16, edgeSize = 16,
+    insets = { left = 0, right = 0, top = 0, bottom = -10 }
+}
+
+end
+
 createFrames = function()
 MainFrame=CreateFrame("Frame","MainFrame",UIParent)
 ChatFrame=CreateFrame("Frame","ChatFrame",UIParent)
+--ReportFrame=CreateFrame("Frame","ReportFrame",UIParent)
 
 text=MainFrame:CreateFontString(nil,"OVERLAY","GameFontNormal")
 text1=MainFrame:CreateFontString(nil,"OVERLAY","GameFontNormal")
@@ -111,12 +132,22 @@ timer6=MainFrame:CreateFontString(nil,"OVERLAY","GameFontNormal")
 
 resetButton = CreateFrame("Button","startButton1",MainFrame,"UIPanelButtonGrayTemplate")
 startButton1 = CreateFrame("Button","startButton1",MainFrame,"UIPanelButtonGrayTemplate")
-startButton2 = CreateFrame("Button","startButton1",MainFrame,"UIPanelButtonGrayTemplate")
-startButton3 = CreateFrame("Button","startButton1",MainFrame,"UIPanelButtonGrayTemplate")
-startButton4 = CreateFrame("Button","startButton1",MainFrame,"UIPanelButtonGrayTemplate")
-startButton5 = CreateFrame("Button","startButton1",MainFrame,"UIPanelButtonGrayTemplate")
-startButton6 = CreateFrame("Button","startButton1",MainFrame,"UIPanelButtonGrayTemplate")
+startButton2 = CreateFrame("Button","startButton2",MainFrame,"UIPanelButtonGrayTemplate")
+startButton3 = CreateFrame("Button","startButton3",MainFrame,"UIPanelButtonGrayTemplate")
+startButton4 = CreateFrame("Button","startButton4",MainFrame,"UIPanelButtonGrayTemplate")
+startButton5 = CreateFrame("Button","startButton5",MainFrame,"UIPanelButtonGrayTemplate")
+startButton6 = CreateFrame("Button","startButton6",MainFrame,"UIPanelButtonGrayTemplate")
 syncButton = CreateFrame("Button","startButton1",MainFrame,"UIPanelButtonGrayTemplate")
+
+shareButton = CreateFrame("Button","shareButton",MainFrame,"UIPanelButtonGrayTemplate")
+shareButton1 = CreateFrame("Button","shareButton1",MainFrame,"UIPanelButtonGrayTemplate")
+shareButton2 = CreateFrame("Button","shareButton2",MainFrame,"UIPanelButtonGrayTemplate")
+shareButton3 = CreateFrame("Button","shareButton3",MainFrame,"UIPanelButtonGrayTemplate")
+shareButton4 = CreateFrame("Button","shareButton4",MainFrame,"UIPanelButtonGrayTemplate")
+shareButton5 = CreateFrame("Button","shareButton5",MainFrame,"UIPanelButtonGrayTemplate")
+shareButton6 = CreateFrame("Button","shareButton6",MainFrame,"UIPanelButtonGrayTemplate")
+
+--reportOption1 = ReportFrame:CreateFrame("Frame","reportOption1",UIParent)
 
 MainFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 MainFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
@@ -136,6 +167,12 @@ setDefaults = function()
 	MainFrame:SetUserPlaced(true)
 	MainFrame:EnableMouse()
 	MainFrame:SetScript("OnUpdate", MainFrame.OnUpdate)
+	
+	-- ReportFrame:SetPoint("LEFT",shareButton,"RIGHT")
+	-- ReportFrame:SetSize(200,200)
+	-- ReportFrame:SetAlpha(1)
+	-- ReportFrame:EnableMouse()
+	-- ReportFrame:SetBackdrop(backdrop)
 
 
 	text:SetPoint("TOPLEFT")
@@ -144,7 +181,6 @@ setDefaults = function()
 	text:SetText(dtClr .. "|TInterface\\Icons\\Inv_misc_pelt_03:16|tSession:            \n ")
 	text:SetFont(DinoTimersFont, fontSize, fontFlags)
 
-
 	text1:SetPoint("TOPLEFT",text,"BOTTOMLEFT",0,0)
 	text1:SetText(gryClr .. "North West:")
 	text1:SetFont(DinoTimersFont, fontSize, fontFlags)
@@ -152,7 +188,7 @@ setDefaults = function()
 	text2:SetPoint("TOPLEFT",text1,"BOTTOMLEFT",0,-3)
 	text2:SetText(gryClr .. "North:")
 	text2:SetFont(DinoTimersFont, fontSize, fontFlags)
-
+	
 	text3:SetPoint("TOPLEFT",text2,"BOTTOMLEFT",0,-3)
 	text3:SetText(gryClr .. "East:")
 	text3:SetFont(DinoTimersFont, fontSize, fontFlags)
@@ -248,20 +284,48 @@ syncButton:SetWidth(timer:GetStringWidth()*2)
 syncButton:SetHeight(text6:GetStringHeight()*2)
 syncButton:SetText("Connect")
 syncButton:RegisterForClicks("LeftButtonUp")
-end
 
-backdropDefault = function()
+shareButton:SetPoint("TOPLEFT",MainFrame, "TOPRIGHT",-2,0)
+shareButton:SetWidth(timer:GetStringWidth()/1.5)
+shareButton:SetHeight(text:GetStringHeight()/2)
+shareButton:SetText("Share")
+shareButton:RegisterForClicks("LeftButtonUp")
 
-background = "Interface\\TutorialFrame\\TutorialFrameBackground"
-edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border"
-backdrop =
-{
-    bgFile = background,
-    edgeFile = edge,
-    tile = false, tileSize = 16, edgeSize = 16,
-    insets = { left = 0, right = 0, top = 0, bottom = -10 }
-}
+shareButton1:SetPoint("TOPLEFT",timer1, "TOPRIGHT",-2,0)
+shareButton1:SetWidth(timer:GetStringWidth()/1.5)
+shareButton1:SetHeight(text1:GetStringHeight())
+shareButton1:SetText("Share")
+shareButton1:RegisterForClicks("LeftButtonUp")
 
+shareButton2:SetPoint("TOPLEFT",timer2, "TOPRIGHT",-2,0)
+shareButton2:SetWidth(timer:GetStringWidth()/1.5)
+shareButton2:SetHeight(text2:GetStringHeight())
+shareButton2:SetText("Share")
+shareButton2:RegisterForClicks("LeftButtonUp")
+
+shareButton3:SetPoint("TOPLEFT",timer3, "TOPRIGHT",-2,0)
+shareButton3:SetWidth(timer:GetStringWidth()/1.5)
+shareButton3:SetHeight(text3:GetStringHeight())
+shareButton3:SetText("Share")
+shareButton3:RegisterForClicks("LeftButtonUp")
+
+shareButton4:SetPoint("TOPLEFT",timer4, "TOPRIGHT",-2,0)
+shareButton4:SetWidth(timer:GetStringWidth()/1.5)
+shareButton4:SetHeight(text4:GetStringHeight())
+shareButton4:SetText("Share")
+shareButton4:RegisterForClicks("LeftButtonUp")
+
+shareButton5:SetPoint("TOPLEFT",timer5, "TOPRIGHT",-2,0)
+shareButton5:SetWidth(timer:GetStringWidth()/1.5)
+shareButton5:SetHeight(text5:GetStringHeight())
+shareButton5:SetText("Share")
+shareButton5:RegisterForClicks("LeftButtonUp")
+
+shareButton6:SetPoint("TOPLEFT",timer6, "TOPRIGHT",-2,0)
+shareButton6:SetWidth(timer:GetStringWidth()/1.5)
+shareButton6:SetHeight(text6:GetStringHeight())
+shareButton6:SetText("Share")
+shareButton6:RegisterForClicks("LeftButtonUp")
 end
 
 adjustSize = function()
@@ -322,6 +386,26 @@ adjustSize = function()
 	syncButton:SetWidth(timer:GetStringWidth()*2)
 	syncButton:SetHeight(text6:GetStringHeight()*2)
 	
+	shareButton:SetWidth(timer:GetStringWidth()/1.5)
+	shareButton:SetHeight(text:GetStringHeight()/2)
+
+	shareButton1:SetWidth(timer:GetStringWidth()/1.5)
+	shareButton1:SetHeight(text1:GetStringHeight())
+
+	shareButton2:SetWidth(timer:GetStringWidth()/1.5)
+	shareButton2:SetHeight(text2:GetStringHeight())
+
+	shareButton3:SetWidth(timer:GetStringWidth()/1.5)
+	shareButton3:SetHeight(text3:GetStringHeight())
+
+	shareButton4:SetWidth(timer:GetStringWidth()/1.5)
+	shareButton4:SetHeight(text4:GetStringHeight())
+
+	shareButton5:SetWidth(timer:GetStringWidth()/1.5)
+	shareButton5:SetHeight(text5:GetStringHeight())
+
+	shareButton6:SetWidth(timer:GetStringWidth()/1.5)
+	shareButton6:SetHeight(text6:GetStringHeight())
 	
 end
 
@@ -433,6 +517,86 @@ updateCurrentTime()
 
 end
 
+shareAll = function()
+		if(NW == 0) then
+			shareTimer("NW", "reset")
+		else
+			shareTimer("NW", timeDead(NW))
+		end
+		
+		if(N == 0) then
+			shareTimer("N", "reset")
+		else
+			shareTimer("N", timeDead(N))
+		end
+		
+		if(E == 0) then
+			shareTimer("E", "reset")
+		else
+			shareTimer("E", timeDead(E))
+		end
+		
+		if(W == 0) then
+			shareTimer("W", "reset")
+		else
+			shareTimer("W", timeDead(W))
+		end
+		
+		if(SW == 0) then
+			shareTimer("SW", "reset")
+		else
+			shareTimer("SW", timeDead(SW))
+		end
+		
+		if(SE == 0) then
+			shareTimer("SE", "reset")
+		else
+			shareTimer("SE", timeDead(SE))
+		end
+end
+
+share = function(self)
+	if(self == shareButton) then
+		shareAll()
+		
+	elseif(self == shareButton1) then
+		if(NW == 0) then
+			shareTimer("NW", "reset")
+		else
+			shareTimer("NW", timeDead(NW))
+		end
+	elseif(self == shareButton2) then
+		if(N == 0) then
+			shareTimer("N", "reset")
+		else
+			shareTimer("N", timeDead(N))
+		end
+	elseif(self == shareButton3) then
+		if(E == 0) then
+			shareTimer("E", "reset")
+		else
+			shareTimer("E", timeDead(E))
+		end
+	elseif(self == shareButton4) then
+		if(W == 0) then
+			shareTimer("W", "reset")
+		else
+			shareTimer("W", timeDead(W))
+		end
+	elseif(self == shareButton5) then
+		if(SW == 0) then
+			shareTimer("SW", "reset")
+		else
+			shareTimer("SW", timeDead(SW))
+		end
+	elseif(self == shareButton6) then
+		if(SE == 0) then
+			shareTimer("SE", "reset")
+		else
+			shareTimer("SE", timeDead(SE))
+		end
+	end
+end
 
 createFrames()
 backdropDefault()
@@ -446,7 +610,7 @@ function MainFrame:OnUpdate(arg1) -- MAIN UPDATE FUNCTION!
 	if(updateInterval<timeSinceUpdate or updateNow == true) then
 -- actual code on update here
 		updateCurrentTime()
-		timer:SetText(dtClr .. secondsFormat(sessionTime))
+		timer:SetText(dtClr .. secondsFormat(sessionTime - sessionTimeOffset))
 		
 		printController(NW)
 		printController(N)
@@ -556,6 +720,34 @@ syncButton:SetScript('OnLeave', function()
 	end
 end)
 
+shareButton:SetScript("OnMouseUp", function(self, button)
+	share(self)
+end)
+
+shareButton1:SetScript("OnMouseUp", function(self, button)
+	share(self)
+end)
+
+shareButton2:SetScript("OnMouseUp", function(self, button)
+	share(self)
+end)
+
+shareButton3:SetScript("OnMouseUp", function(self, button)
+	share(self)
+end)
+
+shareButton4:SetScript("OnMouseUp", function(self, button)
+	share(self)
+end)
+
+shareButton5:SetScript("OnMouseUp", function(self, button)
+	share(self)
+end)
+
+shareButton6:SetScript("OnMouseUp", function(self, button)
+	share(self)
+end)
+
 MainFrame:SetScript("OnMouseDown", function(self, button)
 	if button == "LeftButton" and not self.isMoving then
 		_, _, _, xpos1, ypos1 = MainFrame:GetPoint(1)
@@ -598,13 +790,18 @@ MainFrame:SetScript("OnEvent", -- THE GOOD SHIT - The call that starts the entir
 	end		
 end)
 
-ChatFrame:SetScript("OnEvent",
+ChatFrame:SetScript("OnEvent", -- CHAT SCANNER!
 	function(self, event, ...)
 	local chatMessage, arg2, arg3, channelName, arg5, arg6, arg7, arg8, arg9 = ...
 		if(string.find(channelName, "DinoTimers")) then
 			if(string.find(chatMessage,"DinoTimers:")) then
-				local temp = chatMessage:gsub('%DinoTimers:','')
-				diedAt(temp)
+				--local temp = chatMessage:gsub('%DinoTimers:','')
+				local temp = string.match(chatMessage, ':(.*),')
+				local temp2 = string.match(chatMessage, ',(.*)')
+					if(temp2 == "") then
+						temp2 = 0
+					end
+						diedAt(temp,temp2)
 				--print(string.sub('ITS WORKING', -7))
 			end
 		end
@@ -696,7 +893,7 @@ getMouseOverName = function()
 end
 
 updateCurrentTime = function()
-	sessionTime = time() - tStart
+	sessionTime = time() - tStart + sessionTimeOffset
 end
 
 addonSyncFunc = function()
@@ -776,7 +973,15 @@ updateSyncButton = function()
 end
 
 sendDiedAtMessage = function(dino)
-	DEFAULT_CHAT_FRAME.editBox:SetText("/" .. channelNumber .. " DinoTimers:" .. dino) 
+	DEFAULT_CHAT_FRAME.editBox:SetText("/" .. channelNumber .. " DinoTimers:" .. dino
+	.. ",") 
+	ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox)
+	DEFAULT_CHAT_FRAME.editBox:SetText("") 
+end
+
+shareTimer = function(dino, offset)
+	DEFAULT_CHAT_FRAME.editBox:SetText("/" .. channelNumber .. " DinoTimers:" .. dino
+	.. "," .. offset) 
 	ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox)
 	DEFAULT_CHAT_FRAME.editBox:SetText("") 
 end
@@ -789,36 +994,63 @@ secondsFormat = function(t)
 	return format("%02d:%02d",minutes,seconds)
 end
 
-diedAt = function(dino)
+diedAt = function(dino, offset)
+	if(offset == nil) then
+		offset = 0
+	end
 	if(dino == "NW") then
-		NW = sessionTime
-		startButton1:SetText("Reset")
-		updateNow = true
+		if(offset == "reset") then
+			resetNW()
+		else
+			NW = sessionTime - offset
+			startButton1:SetText("Reset")
+			updateNow = true
+		end
 	end
 	if(dino == "N") then
-		N = sessionTime
-		startButton2:SetText("Reset")
-		updateNow = true
+		if(offset == "reset") then
+			resetN()
+		else
+			N = sessionTime - offset
+			startButton2:SetText("Reset")
+			updateNow = true
+		end
 	end
 	if(dino == "E") then
-		E = sessionTime
-		startButton3:SetText("Reset")
-		updateNow = true
+		if(offset == "reset") then
+			resetE()
+		else
+			E = sessionTime - offset
+			startButton3:SetText("Reset")
+			updateNow = true
+		end
 	end
 	if(dino == "W") then
-		W = sessionTime
-		startButton4:SetText("Reset")
-		updateNow = true
+		if(offset == "reset") then
+			resetW()
+		else
+			W = sessionTime - offset
+			startButton4:SetText("Reset")
+			updateNow = true
+		end
 	end
 	if(dino == "SW") then
-		SW = sessionTime
-		startButton5:SetText("Reset")
-		updateNow = true
+		if(offset == "reset") then
+			resetSW()
+		else
+			SW = sessionTime - offset
+			startButton5:SetText("Reset")
+			updateNow = true
+		end
 	end
 	if(dino == "SE") then
-		SE = sessionTime
-		startButton6:SetText("Reset")
-		updateNow = true
+		if(offset == "reset") then
+			resetSE()
+		else
+			SE = sessionTime - offset
+			startButton6:SetText("Reset")
+			updateNow = true
+		end
 	end
 
 end

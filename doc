@@ -1,0 +1,18 @@
+Design Doc:
+
+Connectivity Modes:
+	Solo: Sends no public information, addon works independantly of other users.
+	
+	Private Event: Joining a private channel of some sort, to only trade information with chosen parties.
+		:This may involve private password protected channels.
+			:Private channels would require changing how connecting to Public channels works
+				:Seperate unique channels would be required to be generated
+					:User would leave current dinotimers channel, and join the new one.
+		:Alternativly.. just spam in party chat.
+			:Party would be required though
+			
+	Total Public Access: Shares DinoTimers with everyone in channel, sync accross server.
+		:Possibly add feature to only accept timers from aproved users
+		
+Sharing Current Timers:
+	Hover timer, right click, option to share
