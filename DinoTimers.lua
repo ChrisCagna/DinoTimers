@@ -39,6 +39,7 @@ local dinoFoundTime = -100
 local dinoFoundSoundInterval = 45
 
 local mobName = "Devilsaur"
+local currentChannelName = "dinotimers"
 local addonSync = false
 local connected = false
 local channelNumber = 0
@@ -94,6 +95,7 @@ Init_Frame:SetScript("OnEvent",
 		if(event=="PLAYER_ENTERING_WORLD") then
 			previousZone = GetZoneText()
 			updateLocation()
+			adjustSize()
 		end
 end)
 
@@ -643,7 +645,6 @@ createFrames()
 backdropDefault()
 setDefaults()
 setButtonDefaults()
-
 createOptionsPannel()
 createMenuFrame()
 adjustSize()
@@ -901,7 +902,7 @@ end)
 ChatFrame:SetScript("OnEvent", -- CHAT SCANNER!
 	function(self, event, ...)
 	local chatMessage, arg2, arg3, channelName, arg5, arg6, arg7, arg8, arg9 = ...
-		if(string.find(channelName, "DinoTimers")) then
+		if(string.find(string.lower(channelName), currentChannelName)) then
 			if(string.find(chatMessage,"DinoTimers:")) then
 				--local temp = chatMessage:gsub('%DinoTimers:','')
 				local temp = string.match(chatMessage, ':(.*),')
@@ -953,6 +954,7 @@ StaticPopupDialogs["AskToReset"] = {
 StaticPopupDialogs["GetWhisperName"] = {
 	text = "Whisper Target's Name",
 	button1 = "Send",
+	button2 = "No",
 	OnAccept = function(self)
 		local text = self.editBox:GetText()
 		whisperTimer(currentShareButton, text)
@@ -1252,7 +1254,6 @@ printController = function(dino)
 end
 
 MainFrame:SetScript("OnUpdate", MainFrame.OnUpdate)
-
 
 
 
