@@ -56,15 +56,16 @@ SLASH_DINOTIMERS1 = "/dt"
 local function handler(msg, editBox)
 	if(msg == "test") then
 		--diedAt("E","5")
-		local chatMessage = "DinoTimers:E,65"
-		local temp = string.match(chatMessage, ':(.*),')
-		local temp2 = string.match(chatMessage, ',(.*)')
-			if(temp2 == "") then
-				temp2 = 0
-			end
-		print(temp)
-		print(temp2)
-		diedAt(temp, temp2)
+		-- local chatMessage = "DinoTimers:E,65"
+		-- local temp = string.match(chatMessage, ':(.*),')
+		-- local temp2 = string.match(chatMessage, ',(.*)')
+			-- if(temp2 == "") then
+				-- temp2 = 0
+			-- end
+		-- print(temp)
+		-- print(temp2)
+		-- diedAt(temp, temp2)
+		ScanForDinos()
 	elseif(msg == "NW" or msg == "N" or msg == "E" or msg == "W" or msg == "SW" or msg == "SE") then
 		diedAt(msg)
 	elseif(msg == "bigger") then
@@ -200,7 +201,7 @@ setDefaults = function()
 	text6:SetText(gryClr .. "South East:")
 	text6:SetFont(DinoTimersFont, fontSize, fontFlags)
 
-	timer:SetPoint("TOPLEFT",text,"TOPRIGHT")
+	timer:SetPoint("TOPRIGHT",MainFrame,"TOPRIGHT")
 	timer:SetText(gryClr .. "00:00")
 	timer:SetFont(DinoTimersFont, fontSize, fontFlags)
 
@@ -286,7 +287,7 @@ syncButton:SetHeight(text6:GetStringHeight()*2)
 syncButton:SetText("Connect")
 syncButton:RegisterForClicks("LeftButtonUp")
 
-shareButton:SetPoint("TOPLEFT",MainFrame, "TOPRIGHT",-2,0)
+shareButton:SetPoint("TOPLEFT",timer, "TOPRIGHT",-2,0)
 shareButton:SetWidth(timer:GetStringWidth()/1.5)
 shareButton:SetHeight(text:GetStringHeight()/2)
 shareButton:SetText("Share")
@@ -739,7 +740,10 @@ function MainFrame:OnUpdate(arg1) -- MAIN UPDATE FUNCTION!
 		end
 		
 		updateSyncButton()
-		
+		if(sessionTime - dinoFoundTime > dinoFoundSoundInterval) then
+		ScanForDinos()
+		end	
+
 -- actual code end
 		if(updateNow == false) then
 			timeSinceUpdate = 0
@@ -1170,7 +1174,11 @@ secondsFormat = function(t)
 	local hours = floor(mod(t, 86400)/3600)
 	local minutes = floor(mod(t,3600)/60)
 	local seconds = floor(mod(t,60))
-	return format("%02d:%02d",minutes,seconds)
+	if(t>3599) then 
+		return format("%01d:%02d:%02d",hours,minutes,seconds)
+	else
+		return format("%02d:%02d",minutes,seconds)
+	end
 end
 
 diedAt = function(dino, offset)
@@ -1241,9 +1249,9 @@ end
 printController = function(dino)
 	-- set color of text
 	local clr = ""
-	if(timeDead(dino) >= 600 and timeDead(dino) <960 ) then
+	if(timeDead(dino) >= 300 and timeDead(dino) <480 ) then
 		clr = "|cff00ff00"
-	elseif(timeDead(dino)>=960) then
+	elseif(timeDead(dino)>=480) then
 		clr = "|cffff0000"
 	end
 	
@@ -1282,6 +1290,75 @@ if (WorldMapFrame:IsVisible()) then
 			MyMapFrame:Show()
 		else
 			MyMapFrame:Hide()
+		end
+	end
+end
+
+ScanForDinos = function()
+	ScanForD()
+	ScanForT()
+	ScanForI()
+end
+
+ScanForD = function()
+	if(DEFAULT_CHAT_FRAME.editBox:GetText() == "") then
+	print("searching..")
+	DEFAULT_CHAT_FRAME.editBox:SetText("/target Devilsaur") 
+	ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox)
+	DEFAULT_CHAT_FRAME.editBox:SetText("") 
+	local temp = StaticPopup1Text:GetText()
+	--if(temp ~= nil) then 
+		if(string.find(temp, "DinoTimers")) then
+			print("DINO FOUND")
+			PlaySoundFile("Interface\\AddOns\\DinoTimers\\Sounds\\Walking.ogg", "Master")
+			dinoFoundTime = sessionTime
+		
+			DEFAULT_CHAT_FRAME.editBox:SetText("/click StaticPopup1Button2")
+			ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox)
+			DEFAULT_CHAT_FRAME.editBox:SetText("")
+			StaticPopup1Text:SetText(nil)
+		end
+	end
+end
+
+ScanForT = function()
+	if(DEFAULT_CHAT_FRAME.editBox:GetText() == "") then
+	print("searching..")
+	DEFAULT_CHAT_FRAME.editBox:SetText("/target Tyrant Devilsaur")
+	ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox)
+	DEFAULT_CHAT_FRAME.editBox:SetText("") 
+	local temp = StaticPopup1Text:GetText()
+	--if(temp ~= nil) then 
+		if(string.find(temp, "DinoTimers")) then
+			print("DINO FOUND")
+			PlaySoundFile("Interface\\AddOns\\DinoTimers\\Sounds\\Walking.ogg", "Master")
+			dinoFoundTime = sessionTime
+		
+			DEFAULT_CHAT_FRAME.editBox:SetText("/click StaticPopup1Button2")
+			ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox)
+			DEFAULT_CHAT_FRAME.editBox:SetText("") 
+			StaticPopup1Text:SetText(nil)
+		end
+	end
+end
+
+ScanForI = function()
+	if(DEFAULT_CHAT_FRAME.editBox:GetText() == "") then
+	print("searching..")
+	DEFAULT_CHAT_FRAME.editBox:SetText("/target Ironhide Devilsaur")
+	ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox)
+	DEFAULT_CHAT_FRAME.editBox:SetText("") 
+	local temp = StaticPopup1Text:GetText()
+	--if(temp ~= nil) then 
+		if(string.find(temp, "DinoTimers")) then
+			print("DINO FOUND")
+			PlaySoundFile("Interface\\AddOns\\DinoTimers\\Sounds\\Walking.ogg", "Master")
+			dinoFoundTime = sessionTime
+		
+			DEFAULT_CHAT_FRAME.editBox:SetText("/click StaticPopup1Button2")
+			ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox)
+			DEFAULT_CHAT_FRAME.editBox:SetText("")
+			StaticPopup1Text:SetText(nil)
 		end
 	end
 end
