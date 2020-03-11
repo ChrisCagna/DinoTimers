@@ -116,6 +116,7 @@ end
 createFrames = function()
 MainFrame=CreateFrame("Frame","MainFrame",UIParent)
 ChatFrame=CreateFrame("Frame","ChatFrame",UIParent)
+MyMapFrame = CreateFrame("Frame", "MyMapFrame", WorldMapFrame)
 
 text=MainFrame:CreateFontString(nil,"OVERLAY","GameFontNormal")
 text1=MainFrame:CreateFontString(nil,"OVERLAY","GameFontNormal")
@@ -226,6 +227,12 @@ setDefaults = function()
 	timer6:SetPoint("TOPLEFT",timer5,"BOTTOMLEFT",0,-3)
 	timer6:SetText(gryClr .. "00:00")
 	timer6:SetFont(DinoTimersFont, fontSize, fontFlags)
+	
+	MyMapFrame:SetPoint("TOPLEFT", WorldMapFrame.ScrollContainer, "TOPLEFT",0,0)
+	MyMapFrame:SetWidth(50)
+	MyMapFrame:SetHeight(50)
+	MyMapFrame:SetAlpha(0.5)
+	MyMapFrame:SetFrameLevel(3)
 end
 
 setButtonDefaults = function()
@@ -641,6 +648,17 @@ share = function(self)
 	ReportOptions:Hide()
 end
 
+dinorouteTexture = function()
+	local width = WorldMapFrame.ScrollContainer:GetWidth()
+	local height = WorldMapFrame.ScrollContainer:GetHeight()
+	local dinoMapTexture = MyMapFrame:CreateTexture("$parentGlow", "OVERLAY")
+	WorldMapFrame:SetAlpha(0.9)
+	dinoMapTexture:SetTexture("Interface\\AddOns\\DinoTimers\\Textures\\dinoroute.tga")
+	dinoMapTexture:SetPoint("TOPLEFT")	
+	dinoMapTexture:SetSize(width,height)
+	WorldMapFrame.BlackoutFrame:SetScript("OnShow", function(self) self:Hide() end)
+end
+
 createFrames()
 backdropDefault()
 setDefaults()
@@ -648,6 +666,7 @@ setButtonDefaults()
 createOptionsPannel()
 createMenuFrame()
 adjustSize()
+dinorouteTexture()
 
 ReportOption1:SetScript("OnEnter", function()
 	ReportOption1:SetBackdrop(backdrop)
@@ -712,7 +731,8 @@ function MainFrame:OnUpdate(arg1) -- MAIN UPDATE FUNCTION!
 		printController(E)
 		printController(W)
 		printController(SW)
-		printController(SE)
+		printController(SE)	
+
 		
 		if(addonSync) then
 			addonSyncFunc()
@@ -726,6 +746,8 @@ function MainFrame:OnUpdate(arg1) -- MAIN UPDATE FUNCTION!
 		else
 			updateNow = false
 		end
+
+		IsMapOpenOnCratar()
 
 	end
 end
@@ -1069,6 +1091,7 @@ checkConnection = function()
 end
 
 updateLocation = function()
+	print(GetZoneText());
 	if(GetZoneText() == goalZone) then
 		MainFrame:Show()
 		if(goalZone ~= previousZone and GetZoneText() == goalZone) then
@@ -1251,6 +1274,16 @@ printController = function(dino)
 	end	
 	
 	
+end
+
+IsMapOpenOnCratar = function()
+if (WorldMapFrame:IsVisible()) then
+	if(WorldMapFrame:GetMapID() == 1449) then
+			MyMapFrame:Show()
+		else
+			MyMapFrame:Hide()
+		end
+	end
 end
 
 MainFrame:SetScript("OnUpdate", MainFrame.OnUpdate)
