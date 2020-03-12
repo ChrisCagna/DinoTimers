@@ -44,6 +44,8 @@ local addonSync = false
 local connected = false
 local channelNumber = 0
 
+local radarOn = false
+
 
 local previousZone = ""
 local goalZone = "Un'Goro Crater"
@@ -151,6 +153,8 @@ shareButton3 = CreateFrame("Button","shareButton3",MainFrame,"UIPanelButtonGrayT
 shareButton4 = CreateFrame("Button","shareButton4",MainFrame,"UIPanelButtonGrayTemplate")
 shareButton5 = CreateFrame("Button","shareButton5",MainFrame,"UIPanelButtonGrayTemplate")
 shareButton6 = CreateFrame("Button","shareButton6",MainFrame,"UIPanelButtonGrayTemplate")
+
+radarButton = CreateFrame("Button","radarButton",MainFrame,"UIPanelButtonGrayTemplate")
 
 MainFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 MainFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
@@ -286,6 +290,12 @@ syncButton:SetWidth(timer:GetStringWidth()*2)
 syncButton:SetHeight(text6:GetStringHeight()*2)
 syncButton:SetText("Connect")
 syncButton:RegisterForClicks("LeftButtonUp")
+
+radarButton:SetPoint("TOP",timer6, "BOTTOM",0,-5)
+radarButton:SetWidth(timer:GetStringWidth()*2)
+radarButton:SetHeight(text6:GetStringHeight()*2)
+radarButton:SetText("Radar")
+radarButton:RegisterForClicks("LeftButtonUp")
 
 shareButton:SetPoint("TOPLEFT",timer, "TOPRIGHT",-2,0)
 shareButton:SetWidth(timer:GetStringWidth()/1.5)
@@ -425,6 +435,9 @@ adjustSize = function()
 
 	syncButton:SetWidth(timer:GetStringWidth()*2)
 	syncButton:SetHeight(text6:GetStringHeight()*2)
+	
+	radarButton:SetWidth(timer:GetStringWidth()*2)
+	radarButton:SetHeight(text6:GetStringHeight()*2)
 	
 	shareButton:SetWidth(timer:GetStringWidth()/1.5)
 	shareButton:SetHeight(text:GetStringHeight()/2)
@@ -740,8 +753,8 @@ function MainFrame:OnUpdate(arg1) -- MAIN UPDATE FUNCTION!
 		end
 		
 		updateSyncButton()
-		if(sessionTime - dinoFoundTime > dinoFoundSoundInterval) then
-		ScanForDinos()
+		if((sessionTime - dinoFoundTime > dinoFoundSoundInterval) and radarOn) then
+			ScanForDinos()
 		end	
 
 -- actual code end
@@ -838,6 +851,28 @@ end)
 syncButton:SetScript('OnLeave', function()
 	if(syncButton:GetText() == "|cffff0000Disconnect") then
 		syncButton:SetText("|cff00ff00Connected")
+	end
+end)
+
+radarButton:SetScript("OnMouseUp", function(self, button)
+	if(radarButton:GetText() == "Radar") then
+		radarButton:SetText("|cff00ff00Radar")
+		radarOn = true
+	elseif(radarButton:GetText()) == "|cffff0000Disconnect" then
+		radarOn = false
+		radarButton:SetText("Radar")
+	end
+end)
+
+radarButton:SetScript('OnEnter', function()
+	if(radarButton:GetText() == "|cff00ff00Radar") then
+		radarButton:SetText("|cffff0000Disconnect")
+	end
+end)
+
+radarButton:SetScript('OnLeave', function()
+	if(radarButton:GetText() == "|cffff0000Disconnect") then
+		radarButton:SetText("|cff00ff00Radar")
 	end
 end)
 
@@ -1307,7 +1342,7 @@ ScanForD = function()
 	ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox)
 	DEFAULT_CHAT_FRAME.editBox:SetText("") 
 	local temp = StaticPopup1Text:GetText()
-	--if(temp ~= nil) then 
+	if(temp ~= nil) then 
 		if(string.find(temp, "DinoTimers")) then
 			print("DINO FOUND")
 			PlaySoundFile("Interface\\AddOns\\DinoTimers\\Sounds\\Walking.ogg", "Master")
@@ -1319,6 +1354,7 @@ ScanForD = function()
 			StaticPopup1Text:SetText(nil)
 		end
 	end
+	end
 end
 
 ScanForT = function()
@@ -1328,7 +1364,7 @@ ScanForT = function()
 	ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox)
 	DEFAULT_CHAT_FRAME.editBox:SetText("") 
 	local temp = StaticPopup1Text:GetText()
-	--if(temp ~= nil) then 
+	if(temp ~= nil) then 
 		if(string.find(temp, "DinoTimers")) then
 			print("DINO FOUND")
 			PlaySoundFile("Interface\\AddOns\\DinoTimers\\Sounds\\Walking.ogg", "Master")
@@ -1340,6 +1376,7 @@ ScanForT = function()
 			StaticPopup1Text:SetText(nil)
 		end
 	end
+	end
 end
 
 ScanForI = function()
@@ -1349,7 +1386,7 @@ ScanForI = function()
 	ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox)
 	DEFAULT_CHAT_FRAME.editBox:SetText("") 
 	local temp = StaticPopup1Text:GetText()
-	--if(temp ~= nil) then 
+	if(temp ~= nil) then 
 		if(string.find(temp, "DinoTimers")) then
 			print("DINO FOUND")
 			PlaySoundFile("Interface\\AddOns\\DinoTimers\\Sounds\\Walking.ogg", "Master")
@@ -1360,6 +1397,7 @@ ScanForI = function()
 			DEFAULT_CHAT_FRAME.editBox:SetText("")
 			StaticPopup1Text:SetText(nil)
 		end
+	end
 	end
 end
 
