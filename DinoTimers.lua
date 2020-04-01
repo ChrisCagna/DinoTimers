@@ -45,10 +45,11 @@ local connected = false
 local channelNumber = 0
 
 local radarOn = false
+local radarHitTime = 0;
 
 
 local previousZone = ""
-local goalZone = "Un'Goro Crater"
+local goalZone = "Dun Morogh" -- "Un'Goro Crater"
 
 local currentShareButton;
 
@@ -116,8 +117,8 @@ backdrop =
 
 end
 
-createFrames = function()
-MainFrame=CreateFrame("Frame","MainFrame",UIParent)
+local createFrames = function()
+local MainFrame=CreateFrame("Frame","MainFrame",UIParent)
 ChatFrame=CreateFrame("Frame","ChatFrame",UIParent)
 MyMapFrame = CreateFrame("Frame", "MyMapFrame", WorldMapFrame)
 
@@ -155,6 +156,7 @@ shareButton5 = CreateFrame("Button","shareButton5",MainFrame,"UIPanelButtonGrayT
 shareButton6 = CreateFrame("Button","shareButton6",MainFrame,"UIPanelButtonGrayTemplate")
 
 radarButton = CreateFrame("Button","radarButton",MainFrame,"UIPanelButtonGrayTemplate")
+radarText = radarButton:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 
 MainFrame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 MainFrame:RegisterEvent("PLAYER_TARGET_CHANGED")
@@ -238,6 +240,10 @@ setDefaults = function()
 	MyMapFrame:SetHeight(50)
 	MyMapFrame:SetAlpha(0.5)
 	MyMapFrame:SetFrameLevel(3)
+	
+	radarText:SetPoint("TOP", radarButton, "BOTTOM",0,0)
+	radarText:SetText(gryClr .. "")
+	radarText:SetFont(DinoTimersFont, fontSize, fontFlags)
 end
 
 setButtonDefaults = function()
@@ -511,7 +517,8 @@ resetNW = function()
 	startButton1:SetText("Start")
 end
 
-resetN = function()
+local resetN = function()
+print("fuck")
 	N = 0;
 	text2:SetPoint("TOPLEFT",text1,"BOTTOMLEFT",0,-3)
 	text2:SetText(gryClr .. "North:")
@@ -745,7 +752,8 @@ function MainFrame:OnUpdate(arg1) -- MAIN UPDATE FUNCTION!
 		printController(E)
 		printController(W)
 		printController(SW)
-		printController(SE)	
+		printController(SE)
+		printController(radarHitTime)
 
 		
 		if(addonSync) then
@@ -1130,7 +1138,6 @@ checkConnection = function()
 end
 
 updateLocation = function()
-	print(GetZoneText());
 	if(GetZoneText() == goalZone) then
 		MainFrame:Show()
 		if(goalZone ~= previousZone and GetZoneText() == goalZone) then
@@ -1140,6 +1147,7 @@ updateLocation = function()
 		StaticPopup_Show ("AskToHide")	
 	else
 		hideMainFrame()
+		MyMapFrame:Hide()
 	end
 	previousZone = GetZoneText()
 end
@@ -1315,6 +1323,9 @@ printController = function(dino)
 		text6:SetText(clr .. "South East:")
 		timer6:SetText(clr .. secondsFormat(timeDead(SE)))
 	end	
+	if(dino > 0 and dino == radarHitTime) then
+		radarText:SetText(clr .. secondsFormat(sessionTime - radarHitTime))
+	end	
 	
 	
 end
@@ -1337,14 +1348,14 @@ end
 
 ScanForD = function()
 	if(DEFAULT_CHAT_FRAME.editBox:GetText() == "") then
-	print("searching..")
 	DEFAULT_CHAT_FRAME.editBox:SetText("/target Devilsaur") 
 	ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox)
 	DEFAULT_CHAT_FRAME.editBox:SetText("") 
 	local temp = StaticPopup1Text:GetText()
 	if(temp ~= nil) then 
 		if(string.find(temp, "DinoTimers")) then
-			print("DINO FOUND")
+			radarHitTime = sessionTime
+			
 			PlaySoundFile("Interface\\AddOns\\DinoTimers\\Sounds\\Walking.ogg", "Master")
 			dinoFoundTime = sessionTime
 		
@@ -1359,14 +1370,14 @@ end
 
 ScanForT = function()
 	if(DEFAULT_CHAT_FRAME.editBox:GetText() == "") then
-	print("searching..")
 	DEFAULT_CHAT_FRAME.editBox:SetText("/target Tyrant Devilsaur")
 	ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox)
 	DEFAULT_CHAT_FRAME.editBox:SetText("") 
 	local temp = StaticPopup1Text:GetText()
 	if(temp ~= nil) then 
 		if(string.find(temp, "DinoTimers")) then
-			print("DINO FOUND")
+			radarHitTime = sessionTime
+			
 			PlaySoundFile("Interface\\AddOns\\DinoTimers\\Sounds\\Walking.ogg", "Master")
 			dinoFoundTime = sessionTime
 		
@@ -1381,14 +1392,14 @@ end
 
 ScanForI = function()
 	if(DEFAULT_CHAT_FRAME.editBox:GetText() == "") then
-	print("searching..")
 	DEFAULT_CHAT_FRAME.editBox:SetText("/target Ironhide Devilsaur")
 	ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox)
 	DEFAULT_CHAT_FRAME.editBox:SetText("") 
 	local temp = StaticPopup1Text:GetText()
 	if(temp ~= nil) then 
 		if(string.find(temp, "DinoTimers")) then
-			print("DINO FOUND")
+			radarHitTime = sessionTime
+			
 			PlaySoundFile("Interface\\AddOns\\DinoTimers\\Sounds\\Walking.ogg", "Master")
 			dinoFoundTime = sessionTime
 		
