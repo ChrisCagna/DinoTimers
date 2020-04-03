@@ -49,7 +49,7 @@ local radarHitTime = 0;
 
 
 local previousZone = ""
-local goalZone = "Dun Morogh" -- "Un'Goro Crater"
+local goalZone = "Un'Goro Crater"
 
 local currentShareButton;
 
@@ -1341,58 +1341,14 @@ if (WorldMapFrame:IsVisible()) then
 end
 
 ScanForDinos = function()
-	ScanForD()
-	ScanForT()
-	ScanForI()
+	ScanForName("Devilsaur")
+	ScanForName("Tyrant Devilsaur")
+	ScanForName("Ironhide Devilsaur")
 end
 
-ScanForD = function()
-	if(DEFAULT_CHAT_FRAME.editBox:GetText() == "") then
-	DEFAULT_CHAT_FRAME.editBox:SetText("/target Devilsaur") 
-	ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox)
-	DEFAULT_CHAT_FRAME.editBox:SetText("") 
-	local temp = StaticPopup1Text:GetText()
-	if(temp ~= nil) then 
-		if(string.find(temp, "DinoTimers")) then
-			radarHitTime = sessionTime
-			
-			PlaySoundFile("Interface\\AddOns\\DinoTimers\\Sounds\\Walking.ogg", "Master")
-			dinoFoundTime = sessionTime
-		
-			DEFAULT_CHAT_FRAME.editBox:SetText("/click StaticPopup1Button2")
-			ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox)
-			DEFAULT_CHAT_FRAME.editBox:SetText("")
-			StaticPopup1Text:SetText(nil)
-		end
-	end
-	end
-end
-
-ScanForT = function()
-	if(DEFAULT_CHAT_FRAME.editBox:GetText() == "") then
-	DEFAULT_CHAT_FRAME.editBox:SetText("/target Tyrant Devilsaur")
-	ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox)
-	DEFAULT_CHAT_FRAME.editBox:SetText("") 
-	local temp = StaticPopup1Text:GetText()
-	if(temp ~= nil) then 
-		if(string.find(temp, "DinoTimers")) then
-			radarHitTime = sessionTime
-			
-			PlaySoundFile("Interface\\AddOns\\DinoTimers\\Sounds\\Walking.ogg", "Master")
-			dinoFoundTime = sessionTime
-		
-			DEFAULT_CHAT_FRAME.editBox:SetText("/click StaticPopup1Button2")
-			ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox)
-			DEFAULT_CHAT_FRAME.editBox:SetText("") 
-			StaticPopup1Text:SetText(nil)
-		end
-	end
-	end
-end
-
-ScanForI = function()
-	if(DEFAULT_CHAT_FRAME.editBox:GetText() == "") then
-	DEFAULT_CHAT_FRAME.editBox:SetText("/target Ironhide Devilsaur")
+ScanForName = function(name)
+	if(DEFAULT_CHAT_FRAME.editBox:HasFocus() == false) then
+	DEFAULT_CHAT_FRAME.editBox:SetText("/target " .. name) 
 	ChatEdit_SendText(DEFAULT_CHAT_FRAME.editBox)
 	DEFAULT_CHAT_FRAME.editBox:SetText("") 
 	local temp = StaticPopup1Text:GetText()
